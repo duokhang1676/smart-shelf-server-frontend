@@ -5,11 +5,9 @@ import {
   Button,
   CircularProgress,
   Container,
-  FormControlLabel,
   Grid,
   Paper,
   Snackbar,
-  Switch,
   TextField,
   Typography,
 } from "@mui/material";
@@ -17,13 +15,11 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { getSepayConfig, SepayConfig, upsertSepayConfig } from "../service/sepayConfig.service";
 
 const defaultConfig: SepayConfig = {
-  apiKey: "",
-  apiSecret: "",
-  merchantCode: "",
-  webhookUrl: "",
-  callbackUrl: "",
-  sandbox: true,
-  active: true,
+  VIETQR_ACCOUNT_NO: "",
+  VIETQR_ACCOUNT_NAME: "",
+  VIETQR_ACQ_ID: "",
+  SEPAY_AUTH_TOKEN: "",
+  SEPAY_BANK_ACCOUNT_ID: "",
 };
 
 const ConfigPage: React.FC = () => {
@@ -55,21 +51,15 @@ const ConfigPage: React.FC = () => {
     setForm((prev) => ({ ...prev, [field]: event.target.value }));
   };
 
-  const handleToggle = (field: keyof SepayConfig) => (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-    setForm((prev) => ({ ...prev, [field]: checked }));
-  };
-
   const handleSubmit = async () => {
     setSaving(true);
     try {
       const payload = {
-        apiKey: form.apiKey,
-        apiSecret: form.apiSecret,
-        merchantCode: form.merchantCode,
-        webhookUrl: form.webhookUrl,
-        callbackUrl: form.callbackUrl,
-        sandbox: form.sandbox,
-        active: form.active,
+        VIETQR_ACCOUNT_NO: form.VIETQR_ACCOUNT_NO,
+        VIETQR_ACCOUNT_NAME: form.VIETQR_ACCOUNT_NAME,
+        VIETQR_ACQ_ID: form.VIETQR_ACQ_ID,
+        SEPAY_AUTH_TOKEN: form.SEPAY_AUTH_TOKEN,
+        SEPAY_BANK_ACCOUNT_ID: form.SEPAY_BANK_ACCOUNT_ID,
       };
       const saved = await upsertSepayConfig(payload);
       setForm(saved);
@@ -84,8 +74,8 @@ const ConfigPage: React.FC = () => {
   };
 
   const isDisabled = useMemo(() => {
-    return !form.apiKey?.trim() || !form.apiSecret?.trim();
-  }, [form.apiKey, form.apiSecret]);
+    return !form.VIETQR_ACCOUNT_NO?.trim() || !form.VIETQR_ACCOUNT_NAME?.trim() || !form.VIETQR_ACQ_ID?.trim() || !form.SEPAY_AUTH_TOKEN?.trim() || !form.SEPAY_BANK_ACCOUNT_ID?.trim();
+  }, [form.VIETQR_ACCOUNT_NO, form.VIETQR_ACCOUNT_NAME, form.VIETQR_ACQ_ID, form.SEPAY_AUTH_TOKEN, form.SEPAY_BANK_ACCOUNT_ID]);
 
   if (loading) {
     return (
@@ -106,57 +96,48 @@ const ConfigPage: React.FC = () => {
         <Grid container spacing={2}>
           <Grid size={{ md: 6 , sm: 12 }}>
             <TextField
-              label="API Key"
+              label="Số tài khoản"
               fullWidth
               required
-              value={form.apiKey}
-              onChange={handleChange("apiKey")}
+              value={form.VIETQR_ACCOUNT_NO}
+              onChange={handleChange("VIETQR_ACCOUNT_NO")}
             />
           </Grid>
           <Grid size={{ md: 6 , sm: 12 }}>
             <TextField
-              label="API Secret"
+              label="Tên chủ tài khoản"
               fullWidth
               required
-              value={form.apiSecret}
-              onChange={handleChange("apiSecret")}
+              value={form.VIETQR_ACCOUNT_NAME}
+              onChange={handleChange("VIETQR_ACCOUNT_NAME")}
             />
           </Grid>
           <Grid size={{ md: 6 , sm: 12 }}>
             <TextField
-              label="Merchant Code"
+              label="Đầu số thẻ của ngân hàng"
               fullWidth
-              value={form.merchantCode || ""}
-              onChange={handleChange("merchantCode")}
+              required
+              value={form.VIETQR_ACQ_ID}
+              onChange={handleChange("VIETQR_ACQ_ID")}
             />
           </Grid>
           <Grid size={{ md: 6 , sm: 12 }}>
             <TextField
-              label="Webhook URL"
+              label="API Token"
               fullWidth
-              value={form.webhookUrl || ""}
-              onChange={handleChange("webhookUrl")}
+              required
+              value={form.SEPAY_AUTH_TOKEN}
+              onChange={handleChange("SEPAY_AUTH_TOKEN")}
             />
           </Grid>
-          <Grid size={{ md: 6 , sm: 12 }}>
+          <Grid size={{ md: 12 }}>
             <TextField
-              label="Callback URL"
+              label="ID Token"
               fullWidth
-              value={form.callbackUrl || ""}
-              onChange={handleChange("callbackUrl")}
+              required
+              value={form.SEPAY_BANK_ACCOUNT_ID}
+              onChange={handleChange("SEPAY_BANK_ACCOUNT_ID")}
             />
-          </Grid>
-          <Grid size={{ md: 6 , sm: 12 }}>
-            <Box sx={{ display: "flex", gap: 2, alignItems: "center", height: "100%" }}>
-              <FormControlLabel
-                control={<Switch checked={!!form.sandbox} onChange={handleToggle("sandbox")} />}
-                label="Sandbox"
-              />
-              <FormControlLabel
-                control={<Switch checked={!!form.active} onChange={handleToggle("active")} />}
-                label="Kích hoạt"
-              />
-            </Box>
           </Grid>
         </Grid>
 

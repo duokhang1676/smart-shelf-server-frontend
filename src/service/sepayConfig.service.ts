@@ -4,13 +4,11 @@ const API_URL = import.meta.env.VITE_API_ENDPOINT || "/api";
 
 export interface SepayConfig {
   _id?: string;
-  apiKey: string;
-  apiSecret: string;
-  merchantCode?: string;
-  webhookUrl?: string;
-  callbackUrl?: string;
-  sandbox?: boolean;
-  active?: boolean;
+  VIETQR_ACCOUNT_NO: string;
+  VIETQR_ACCOUNT_NAME: string;
+  VIETQR_ACQ_ID: string;
+  SEPAY_AUTH_TOKEN: string;
+  SEPAY_BANK_ACCOUNT_ID: string;
   createdAt?: string;
   updatedAt?: string;
 }
