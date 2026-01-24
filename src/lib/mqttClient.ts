@@ -1,4 +1,4 @@
-import { Client, Message } from "paho-mqtt";
+import mqtt, { MqttClient } from "mqtt";
 
 type MqttOptions = {
   host: string;
@@ -25,95 +25,88 @@ export function createMqttClient(opts: MqttOptions) {
     onFailure,
   } = opts;
 
-  const client = new Client(host, port, path, clientId);
+  // Construct WebSocket URL with proper protocol (wss for secure)
+  const protocol = useSSL ? "wss" : "ws";
+  const brokerUrl = `${protocol}://${host}:${port}${path}`;
+
   let connected = false;
-  let reconnectTimer: NodeJS.Timeout | null = null;
+  let client: MqttClient;
 
-  client.onConnectionLost = (responseObject) => {
-    connected = false;
-    // try reconnect after a delay
-    if (responseObject?.errorCode !== 0) {
-      console.warn("MQTT connection lost:", responseObject.errorMessage);
-    }
-    if (!reconnectTimer) {
-      reconnectTimer = setTimeout(() => {
-        reconnectTimer = null;
-        tryConnect();
-      }, 2000);
-    }
-  };
+  try {
+    client = mqtt.connect(brokerUrl, {
+      clientId,
+      reconnectPeriod: 2000,
+      clean: true,
+    });
 
-  client.onMessageArrived = (message: Message) => {
-    try {
-      const payload = message.payloadString;
-      if (onMessage) onMessage(message.destinationName, payload);
-    } catch (e) {
-      console.error("Error parsing MQTT message", e);
-    }
-  };
-
-  function tryConnect() {
-    client.connect({
-      onSuccess: () => {
-        connected = true;
-        if (onConnect) onConnect();
-        // subscribe to initial topics
-        topics.forEach((t) => {
-          try {
-            client.subscribe(t);
-          } catch (e) {
-            console.warn("Subscribe failed:", e);
+    client.on("connect", () => {
+      connected = true;
+      console.log("MQTT connected");
+      if (onConnect) onConnect();
+      
+      // Subscribe to initial topics
+      topics.forEach((topic) => {
+        client.subscribe(topic, (err) => {
+          if (err) {
+            console.warn("Subscribe failed:", err);
           }
         });
-      },
-      useSSL,
-      onFailure: (err) => {
-        connected = false;
-        console.warn("MQTT connect failure", err);
-        if (onFailure) onFailure(err);
-        // schedule reconnect
-        if (!reconnectTimer) {
-          reconnectTimer = setTimeout(() => {
-            reconnectTimer = null;
-            tryConnect();
-          }, 3000);
-        }
-      },
+      });
     });
-  }
 
-  // initial connect
-  tryConnect();
+    client.on("message", (topic: string, payload: Buffer) => {
+      try {
+        const payloadString = payload.toString();
+        if (onMessage) onMessage(topic, payloadString);
+      } catch (e) {
+        console.error("Error parsing MQTT message", e);
+      }
+    });
+
+    client.on("error", (err) => {
+      connected = false;
+      console.warn("MQTT error:", err);
+      if (onFailure) onFailure(err);
+    });
+
+    client.on("close", () => {
+      connected = false;
+      console.warn("MQTT connection closed");
+    });
+
+    client.on("offline", () => {
+      connected = false;
+      console.warn("MQTT offline");
+    });
+
+  } catch (err) {
+    console.error("Failed to create MQTT client:", err);
+    if (onFailure) onFailure(err);
+  }
 
   return {
     isConnected: () => connected,
     subscribe: (topic: string) => {
-      if (!connected) return;
-      try {
-        client.subscribe(topic);
-      } catch (e) {
-        console.warn("Subscribe error", e);
-      }
+      if (!client) return;
+      client.subscribe(topic, (err) => {
+        if (err) {
+          console.warn("Subscribe error", err);
+        }
+      });
     },
     unsubscribe: (topic: string) => {
-      if (!connected) return;
-      try {
-        client.unsubscribe(topic);
-      } catch (e) {
-        console.warn("Unsubscribe error", e);
-      }
+      if (!client) return;
+      client.unsubscribe(topic, (err) => {
+        if (err) {
+          console.warn("Unsubscribe error", err);
+        }
+      });
     },
     disconnect: () => {
-      if (reconnectTimer) {
-        clearTimeout(reconnectTimer);
-        reconnectTimer = null;
+      if (client) {
+        client.end();
+        connected = false;
       }
-      try {
-        if (client.isConnected()) client.disconnect();
-      } catch (e) {
-        // ignore
-      }
-      connected = false;
     },
     rawClient: client,
   };
