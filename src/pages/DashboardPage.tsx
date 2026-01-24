@@ -29,7 +29,7 @@ export default function DashboardPage() {
   // connect to mqtt and subscribe topics
   const { connected, sensor, loadcellQuantities, tracking, status } = useMqtt({
     host: "broker.hivemq.com",
-    port: 8000,
+    port: 8884,
     path: "/mqtt",
     topics: [
       "shelf/sensor/environment",

@@ -34,7 +34,7 @@ export default function useMqtt(opts?: {
   path?: string;
   topics?: string[];
 }) {
-  const { host = "broker.hivemq.com", port = 8000, path = "/mqtt", topics = [] } = opts || {};
+  const { host = "broker.hivemq.com", port = 8884, path = "/mqtt", topics = [] } = opts || {};
   const clientRef = useRef<any>(null);
   const [connected, setConnected] = useState(false);
 

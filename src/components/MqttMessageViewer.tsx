@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import mqtt from "mqtt";
 import { Paper, Typography, List, ListItem } from "@mui/material";
 
-const MQTT_BROKER = "ws://broker.hivemq.com:8000/mqtt";
+const MQTT_BROKER = "wss://broker.hivemq.com:8884/mqtt";
 const TOPIC = "shelf/loadcell/quantity";
 
 export default function MqttMessageViewer() {

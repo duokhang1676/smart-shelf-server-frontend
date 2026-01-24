@@ -162,9 +162,9 @@ export default function ShelfInterface() {
   useEffect(() => {
     const mqtt = createMqttClient({
       host: "broker.hivemq.com",
-      port: 8000,
+      port: 8884,
       path: "/mqtt",
-      useSSL: false,
+      useSSL: true,
       topics: ["shelf/loadcell/quantity"],
       onConnect: () => {
         console.log("Connected to MQTT broker");
