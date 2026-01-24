@@ -15,14 +15,18 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { getSepayConfig, SepayConfig, upsertSepayConfig } from "../service/sepayConfig.service";
 
 const defaultConfig: SepayConfig = {
-  VIETQR_ACCOUNT_NO: "",
-  VIETQR_ACCOUNT_NAME: "",
-  VIETQR_ACQ_ID: "",
-  SEPAY_AUTH_TOKEN: "",
-  SEPAY_BANK_ACCOUNT_ID: "",
+  vietqrAccountNo: "",
+  vietqrAccountName: "",
+  vietqrAcqId: "",
+  sepayAuthToken: "",
+  sepayBankAccountId: "",
 };
 
 const ConfigPage: React.FC = () => {
+  // Default shelfId - có thể lấy từ localStorage, route params, hoặc user selection
+  const [shelfId] = useState(() => {
+    return localStorage.getItem("selectedShelfId") || "685aafc545619025a0bb9f27";
+  });
   const [form, setForm] = useState<SepayConfig>(defaultConfig);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -34,7 +38,7 @@ const ConfigPage: React.FC = () => {
     const controller = new AbortController();
     (async () => {
       try {
-        const config = await getSepayConfig(controller.signal);
+        const config = await getSepayConfig(shelfId, controller.signal);
         setForm(config || defaultConfig);
       } catch (err: any) {
         console.error("Failed to load Sepay config", err);
@@ -45,7 +49,7 @@ const ConfigPage: React.FC = () => {
     })();
 
     return () => controller.abort();
-  }, []);
+  }, [shelfId]);
 
   const handleChange = (field: keyof SepayConfig) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [field]: event.target.value }));
@@ -55,13 +59,13 @@ const ConfigPage: React.FC = () => {
     setSaving(true);
     try {
       const payload = {
-        VIETQR_ACCOUNT_NO: form.VIETQR_ACCOUNT_NO,
-        VIETQR_ACCOUNT_NAME: form.VIETQR_ACCOUNT_NAME,
-        VIETQR_ACQ_ID: form.VIETQR_ACQ_ID,
-        SEPAY_AUTH_TOKEN: form.SEPAY_AUTH_TOKEN,
-        SEPAY_BANK_ACCOUNT_ID: form.SEPAY_BANK_ACCOUNT_ID,
+        vietqrAccountNo: form.vietqrAccountNo,
+        vietqrAccountName: form.vietqrAccountName,
+        vietqrAcqId: form.vietqrAcqId,
+        sepayAuthToken: form.sepayAuthToken,
+        sepayBankAccountId: form.sepayBankAccountId,
       };
-      const saved = await upsertSepayConfig(payload);
+      const saved = await upsertSepayConfig(shelfId, payload);
       setForm(saved);
       setSnackbar({ open: true, message: "Đã lưu cấu hình Sepay", severity: "success" });
     } catch (err: any) {
@@ -74,8 +78,8 @@ const ConfigPage: React.FC = () => {
   };
 
   const isDisabled = useMemo(() => {
-    return !form.VIETQR_ACCOUNT_NO?.trim() || !form.VIETQR_ACCOUNT_NAME?.trim() || !form.VIETQR_ACQ_ID?.trim() || !form.SEPAY_AUTH_TOKEN?.trim() || !form.SEPAY_BANK_ACCOUNT_ID?.trim();
-  }, [form.VIETQR_ACCOUNT_NO, form.VIETQR_ACCOUNT_NAME, form.VIETQR_ACQ_ID, form.SEPAY_AUTH_TOKEN, form.SEPAY_BANK_ACCOUNT_ID]);
+    return !form.vietqrAccountNo?.trim() || !form.vietqrAccountName?.trim() || !form.vietqrAcqId?.trim() || !form.sepayAuthToken?.trim() || !form.sepayBankAccountId?.trim();
+  }, [form.vietqrAccountNo, form.vietqrAccountName, form.vietqrAcqId, form.sepayAuthToken, form.sepayBankAccountId]);
 
   if (loading) {
     return (
@@ -99,8 +103,8 @@ const ConfigPage: React.FC = () => {
               label="Số tài khoản"
               fullWidth
               required
-              value={form.VIETQR_ACCOUNT_NO}
-              onChange={handleChange("VIETQR_ACCOUNT_NO")}
+              value={form.vietqrAccountNo}
+              onChange={handleChange("vietqrAccountNo")}
             />
           </Grid>
           <Grid size={{ md: 6 , sm: 12 }}>
@@ -108,8 +112,8 @@ const ConfigPage: React.FC = () => {
               label="Tên chủ tài khoản"
               fullWidth
               required
-              value={form.VIETQR_ACCOUNT_NAME}
-              onChange={handleChange("VIETQR_ACCOUNT_NAME")}
+              value={form.vietqrAccountName}
+              onChange={handleChange("vietqrAccountName")}
             />
           </Grid>
           <Grid size={{ md: 6 , sm: 12 }}>
@@ -117,8 +121,8 @@ const ConfigPage: React.FC = () => {
               label="Đầu số thẻ của ngân hàng"
               fullWidth
               required
-              value={form.VIETQR_ACQ_ID}
-              onChange={handleChange("VIETQR_ACQ_ID")}
+              value={form.vietqrAcqId}
+              onChange={handleChange("vietqrAcqId")}
             />
           </Grid>
           <Grid size={{ md: 6 , sm: 12 }}>
@@ -126,8 +130,8 @@ const ConfigPage: React.FC = () => {
               label="API Token"
               fullWidth
               required
-              value={form.SEPAY_AUTH_TOKEN}
-              onChange={handleChange("SEPAY_AUTH_TOKEN")}
+              value={form.sepayAuthToken}
+              onChange={handleChange("sepayAuthToken")}
             />
           </Grid>
           <Grid size={{ md: 12 }}>
@@ -135,8 +139,8 @@ const ConfigPage: React.FC = () => {
               label="ID Token"
               fullWidth
               required
-              value={form.SEPAY_BANK_ACCOUNT_ID}
-              onChange={handleChange("SEPAY_BANK_ACCOUNT_ID")}
+              value={form.sepayBankAccountId}
+              onChange={handleChange("sepayBankAccountId")}
             />
           </Grid>
         </Grid>

@@ -4,18 +4,18 @@ const API_URL = import.meta.env.VITE_API_ENDPOINT || "/api";
 
 export interface SepayConfig {
   _id?: string;
-  VIETQR_ACCOUNT_NO: string;
-  VIETQR_ACCOUNT_NAME: string;
-  VIETQR_ACQ_ID: string;
-  SEPAY_AUTH_TOKEN: string;
-  SEPAY_BANK_ACCOUNT_ID: string;
+  vietqrAccountNo: string;
+  vietqrAccountName: string;
+  vietqrAcqId: string;
+  sepayAuthToken: string;
+  sepayBankAccountId: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
-export async function getSepayConfig(signal?: AbortSignal): Promise<SepayConfig | null> {
+export async function getSepayConfig(shelfId: string, signal?: AbortSignal): Promise<SepayConfig | null> {
   try {
-    const { data } = await axios.get<SepayConfig>(`${API_URL}/sepay-config`, { signal });
+    const { data } = await axios.get<SepayConfig>(`${API_URL}/sepay-config/shelf/${shelfId}`, { signal });
     return data;
   } catch (err: any) {
     if (axios.isAxiosError(err) && err.response?.status === 404) return null;
@@ -23,7 +23,7 @@ export async function getSepayConfig(signal?: AbortSignal): Promise<SepayConfig 
   }
 }
 
-export async function upsertSepayConfig(payload: Partial<SepayConfig>): Promise<SepayConfig> {
-  const { data } = await axios.put<SepayConfig>(`${API_URL}/sepay-config`, payload);
+export async function upsertSepayConfig(shelfId: string, payload: Partial<SepayConfig>): Promise<SepayConfig> {
+  const { data } = await axios.post<SepayConfig>(`${API_URL}/sepay-config/shelf/${shelfId}`, payload);
   return data;
 }
