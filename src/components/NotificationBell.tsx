@@ -45,7 +45,11 @@ const NotificationBell: React.FC = () => {
   useEffect(() => {
     // Kết nối socket với backend URL từ env
     const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:3000";
-    const socket = io(SOCKET_URL);
+    const socket = io(SOCKET_URL, {
+      transports: ['websocket', 'polling'],
+      secure: true,
+      rejectUnauthorized: false
+    });
 
     // Lắng nghe sự kiện notification mới
     socket.on("new-notification", (notification) => {
