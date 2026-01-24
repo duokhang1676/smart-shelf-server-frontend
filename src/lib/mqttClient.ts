@@ -15,10 +15,10 @@ type MqttOptions = {
 export function createMqttClient(opts: MqttOptions) {
   const {
     host,
-    port = 8000,
+    port = 8884,
     path = "/mqtt",
     clientId = "webclient-" + Math.random().toString(16).substr(2, 8),
-    useSSL = false,
+    useSSL = true,
     topics = [],
     onMessage,
     onConnect,
