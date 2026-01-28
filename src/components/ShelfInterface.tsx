@@ -626,24 +626,24 @@ export default function ShelfInterface() {
               backgroundColor: "background.paper",
             }}
           >
-            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 0.5 }}>
               Các mã lỗi:
             </Typography>
-            <List dense sx={{ pl: 0 }}>
+            <List dense sx={{ pl: 0, py: 0 }}>
               <ListItem
-                sx={{ display: "list-item", listStyleType: "disc", py: 0.5, ml: 2 }}
+                sx={{ display: "list-item", listStyleType: "disc", py: 0.25, ml: 2 }}
               >
-                <ListItemText primary="255: lỗi loadcell" />
+                <ListItemText primary="255: lỗi loadcell" primaryTypographyProps={{ variant: "body2" }} />
               </ListItem>
               <ListItem
-                sx={{ display: "list-item", listStyleType: "disc", py: 0.5, ml: 2 }}
+                sx={{ display: "list-item", listStyleType: "disc", py: 0.25, ml: 2 }}
               >
-                <ListItemText primary="200: Số lượng sản phẩm trên ngăn vượt mức tối đa" />
+                <ListItemText primary="200: Số lượng sản phẩm trên ngăn vượt mức tối đa" primaryTypographyProps={{ variant: "body2" }} />
               </ListItem>
               <ListItem
-                sx={{ display: "list-item", listStyleType: "disc", py: 0.5, ml: 2 }}
+                sx={{ display: "list-item", listStyleType: "disc", py: 0.25, ml: 2 }}
               >
-                <ListItemText primary="222: Sản phẩm trên ngăn không đúng" />
+                <ListItemText primary="222: Sản phẩm trên ngăn không đúng" primaryTypographyProps={{ variant: "body2" }} />
               </ListItem>
             </List>
           </Box>
