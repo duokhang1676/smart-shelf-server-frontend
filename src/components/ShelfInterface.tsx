@@ -616,33 +616,46 @@ export default function ShelfInterface() {
           )}
 
           {/* <MqttMessageViewer /> */}
-          <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-            Các mã lỗi:
-          </Typography>
-          <List dense sx={{ pl: 2 }}>
-            <ListItem
-              sx={{ display: "list-item", listStyleType: "disc", py: 0.5 }}
-            >
-              <ListItemText primary="255: lỗi loadcell" />
-            </ListItem>
-            <ListItem
-              sx={{ display: "list-item", listStyleType: "disc", py: 0.5 }}
-            >
-              <ListItemText primary="200: Số lượng sản phẩm trên ngăn vượt mức tối đa" />
-            </ListItem>
-            <ListItem
-              sx={{ display: "list-item", listStyleType: "disc", py: 0.5 }}
-            >
-              <ListItemText primary="222: Sản phẩm trên ngăn không đúng" />
-            </ListItem>
-          </List>
+          <Box
+            sx={{
+              p: 2,
+              mb: 2,
+              border: "1px solid",
+              borderColor: "divider",
+              borderRadius: 1,
+              backgroundColor: "background.paper",
+            }}
+          >
+            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+              Các mã lỗi:
+            </Typography>
+            <List dense sx={{ pl: 0 }}>
+              <ListItem
+                sx={{ display: "list-item", listStyleType: "disc", py: 0.5, ml: 2 }}
+              >
+                <ListItemText primary="255: lỗi loadcell" />
+              </ListItem>
+              <ListItem
+                sx={{ display: "list-item", listStyleType: "disc", py: 0.5, ml: 2 }}
+              >
+                <ListItemText primary="200: Số lượng sản phẩm trên ngăn vượt mức tối đa" />
+              </ListItem>
+              <ListItem
+                sx={{ display: "list-item", listStyleType: "disc", py: 0.5, ml: 2 }}
+              >
+                <ListItemText primary="222: Sản phẩm trên ngăn không đúng" />
+              </ListItem>
+            </List>
+          </Box>
 
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
-              alignItems: "center",
+              alignItems: { xs: "flex-start", sm: "center" },
               mb: 2,
+              gap: 2,
             }}
           >
             <Typography variant="h4">
@@ -667,8 +680,10 @@ export default function ShelfInterface() {
             <Box
               sx={{
                 display: "flex",
-                alignItems: "center",
+                flexDirection: { xs: "column", sm: "row" },
+                alignItems: { xs: "stretch", sm: "center" },
                 gap: 2,
+                width: { xs: "100%", sm: "auto" },
               }}
             >
               {sidebarOpen ? (
@@ -677,15 +692,23 @@ export default function ShelfInterface() {
                   color="primary"
                   onClick={uploadAllLoadCells}
                   disabled={uploading}
+                  sx={{ width: { xs: "100%", sm: "auto" } }}
                 >
                   {uploading ? <CircularProgress size={20} color="inherit" /> : "Lưu"}
                 </Button>
               ) : (
-                <>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    width: { xs: "100%", sm: "auto" },
+                  }}
+                >
                   <Button
                     variant="contained"
                     color="primary"
                     onClick={handleOpenDialog}
+                    sx={{ flex: { xs: 1, sm: "initial" } }}
                   >
                     <AddIcon />
                     Thêm Kệ
@@ -696,10 +719,11 @@ export default function ShelfInterface() {
                     color="secondary"
                     onClick={() => setShelfInfoOpen(true)}
                     disabled={uploading}
+                    sx={{ flex: { xs: 1, sm: "initial" } }}
                   >
                     {uploading ? <CircularProgress size={20} color="inherit" /> : "Cập nhật"}
                   </Button>
-                </>
+                </Box>
               )}
 
               <Button
@@ -709,6 +733,7 @@ export default function ShelfInterface() {
                   setSidebarOpen(!sidebarOpen)
                   sidebarOpen ? setViewChangesMode(false) : setViewChangesMode(true)
                 }}
+                sx={{ width: { xs: "100%", sm: "auto" } }}
               >
                 {sidebarOpen ? "Hủy thay đổi" : "Thay đổi hàng hóa"}
               </Button>

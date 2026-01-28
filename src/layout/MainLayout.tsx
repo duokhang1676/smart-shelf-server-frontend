@@ -55,7 +55,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <HeaderBar />
 
       {/* Main Content */}
-      <main className="flex-grow" style={{ marginTop: isMobile ? '56px' : '64px', width: '100%' }}>
+      <main className="flex-grow" style={{ width: '100%' }}>
         <div 
           className="max-w-7xl mx-auto"
           style={{
