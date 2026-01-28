@@ -488,7 +488,7 @@ export default function ShelfInterface() {
   };
 
   return (
-    <Box sx={{ display: "flex", height: "100vh" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
       <Menu
         anchorEl={menuAnchor}
         open={Boolean(menuAnchor)}
@@ -759,6 +759,19 @@ export default function ShelfInterface() {
             <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
               {[0, 1, 2].map((level) => (
                 <Box key={level}>
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      mb: 2, 
+                      fontWeight: 'bold',
+                      color: 'primary.main',
+                      borderLeft: '4px solid',
+                      borderColor: 'primary.main',
+                      pl: 2
+                    }}
+                  >
+                    Tầng {level + 1}
+                  </Typography>
                   <Grid container spacing={2}>
                     {[0, 1, 2, 3, 4].map((compartment, index) => {
                       const cellIndex = level * 5 + compartment;
@@ -771,7 +784,7 @@ export default function ShelfInterface() {
                           : cell?.quantity ?? 0;
 
                       return (
-                        <Grid component="div" size={2.4} key={index}>
+                        <Grid component="div" size={{ xs: 6, sm: 4, md: 2.4 }} key={index}>
                           <ShelfCompartment
                             level={level}
                             quantity={quantity}
