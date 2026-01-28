@@ -196,8 +196,8 @@ export default function ReceiptPage() {
         <Typography variant="h5">Quản lý hoá đơn</Typography>
 
         <Grid container spacing={2} sx={{ width: { xs: "100%", sm: "auto" } }}>
-          <Grid size={4}>
-            <Paper elevation={3} sx={{ display: "flex", alignItems: "center", gap: 2, p: 1.5, minWidth: 150 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <Paper elevation={3} sx={{ display: "flex", alignItems: "center", gap: 2, p: 1.5, minWidth: { xs: "100%", sm: 150 }, width: "100%" }}>
               <DangerousIcon sx={{ color: "error.main", fontSize: 30 }} />
               <Box>
                 <Typography variant="caption" color="text.secondary">Không thanh toán</Typography>
@@ -206,8 +206,8 @@ export default function ReceiptPage() {
             </Paper>
           </Grid>
 
-          <Grid size={4}>
-            <Paper elevation={3} sx={{ display: "flex", alignItems: "center", gap: 2, p: 1.5, minWidth: 150 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <Paper elevation={3} sx={{ display: "flex", alignItems: "center", gap: 2, p: 1.5, minWidth: { xs: "100%", sm: 150 }, width: "100%" }}>
               <CheckCircleIcon sx={{ color: "success.main", fontSize: 30 }} />
               <Box>
                 <Typography variant="caption" color="text.secondary">Đã thanh toán</Typography>
@@ -216,8 +216,8 @@ export default function ReceiptPage() {
             </Paper>
           </Grid>
 
-          <Grid size={4}>
-            <Paper elevation={3} sx={{ display: "flex", alignItems: "center", gap: 2, p: 1.5, minWidth: 150 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <Paper elevation={3} sx={{ display: "flex", alignItems: "center", gap: 2, p: 1.5, minWidth: { xs: "100%", sm: 150 }, width: "100%" }}>
               <HourglassTopIcon sx={{ color: "warning.main", fontSize: 30 }} />
               <Box>
                 <Typography variant="caption" color="text.secondary">Đang chờ</Typography>

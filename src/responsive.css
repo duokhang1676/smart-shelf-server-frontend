@@ -24,6 +24,36 @@
   .MuiCard-root,
   .MuiPaper-root {
     margin-bottom: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Fix minWidth on Paper components */
+  .MuiPaper-root[style*="minWidth"] {
+    min-width: 100% !important;
+  }
+
+  /* Stack spacing on mobile */
+  .MuiStack-root {
+    gap: 12px !important;
+  }
+
+  /* Box with flex - make it column on mobile */
+  .MuiBox-root {
+    box-sizing: border-box !important;
+  }
+
+  /* Prevent overflow on mobile */
+  * {
+    max-width: 100%;
+  }
+
+  /* Fix for inline styles with minWidth */
+  .css-phgwma-MuiPaper-root,
+  .MuiPaper-elevation,
+  .MuiPaper-elevation3 {
+    min-width: 100% !important;
+    margin-bottom: 12px !important;
   }
 
   /* Form fields full width */

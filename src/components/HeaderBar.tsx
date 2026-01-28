@@ -11,6 +11,7 @@ import {
   Drawer,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Divider,
@@ -207,14 +208,14 @@ const HeaderBar: React.FC = () => {
           
           <List>
             {menuItems.map((item) => (
-              <ListItem
-                button
-                key={item.path}
-                onClick={() => handleNavigate(item.path)}
-                selected={location.pathname === item.path}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
+              <ListItem key={item.path} disablePadding>
+                <ListItemButton
+                  onClick={() => handleNavigate(item.path)}
+                  selected={location.pathname === item.path}
+                >
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
               </ListItem>
             ))}
           </List>
@@ -223,20 +224,26 @@ const HeaderBar: React.FC = () => {
 
           {isLoggedIn ? (
             <List>
-              <ListItem button onClick={() => handleNavigate("/config")}>
-                <ListItemIcon><Settings /></ListItemIcon>
-                <ListItemText primary="Cài đặt" />
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => handleNavigate("/config")}>
+                  <ListItemIcon><Settings /></ListItemIcon>
+                  <ListItemText primary="Cài đặt" />
+                </ListItemButton>
               </ListItem>
-              <ListItem button onClick={handleLogout}>
-                <ListItemIcon><Logout /></ListItemIcon>
-                <ListItemText primary="Đăng xuất" />
+              <ListItem disablePadding>
+                <ListItemButton onClick={handleLogout}>
+                  <ListItemIcon><Logout /></ListItemIcon>
+                  <ListItemText primary="Đăng xuất" />
+                </ListItemButton>
               </ListItem>
             </List>
           ) : (
             <List>
-              <ListItem button onClick={() => handleNavigate("/login")}>
-                <ListItemIcon><Login /></ListItemIcon>
-                <ListItemText primary="Đăng nhập" />
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => handleNavigate("/login")}>
+                  <ListItemIcon><Login /></ListItemIcon>
+                  <ListItemText primary="Đăng nhập" />
+                </ListItemButton>
               </ListItem>
             </List>
           )}
