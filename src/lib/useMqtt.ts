@@ -44,6 +44,9 @@ export default function useMqtt(opts?: {
   const [status, setStatus] = useState<any | null>(null);
 
   useEffect(() => {
+    // Auto-detect SSL: use WSS when page is loaded over HTTPS
+    const useSSL = typeof window !== 'undefined' && window.location.protocol === 'https:';
+    
     clientRef.current = createMqttClient({
       host,
       port,
@@ -51,7 +54,7 @@ export default function useMqtt(opts?: {
       topics,
       onConnect: () => setConnected(true),
       onFailure: () => setConnected(false),
-      useSSL: false,
+      useSSL,
       onMessage: (topic: string, payload: string) => {
         const data = parsePayload(payload);
 
