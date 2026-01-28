@@ -101,8 +101,6 @@ const HeaderBar: React.FC = () => {
 
   return (
     <>
-  return (
-    <>
       <AppBar position="fixed">
         <Toolbar>
           {isMobile ? (
