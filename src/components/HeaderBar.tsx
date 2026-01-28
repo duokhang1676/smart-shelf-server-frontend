@@ -36,6 +36,7 @@ import {
   Settings,
   Logout,
   Login,
+  Close as CloseIcon,
 } from "@mui/icons-material";
 import SettingsIcon from "@mui/icons-material/Settings";
 
@@ -191,7 +192,14 @@ const HeaderBar: React.FC = () => {
         open={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
       >
-        <Box sx={{ width: 280, pt: 2 }}>
+        <Box sx={{ width: 280 }}>
+          {/* Close button */}
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
+            <IconButton onClick={() => setMobileMenuOpen(false)} size="small">
+              <CloseIcon />
+            </IconButton>
+          </Box>
+
           {isLoggedIn && (
             <>
               <Box sx={{ px: 2, pb: 2 }}>
