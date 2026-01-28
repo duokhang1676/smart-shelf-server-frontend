@@ -22,14 +22,14 @@
 
   /* Card spacing */
   .MuiCard-root,
-  .MuiPaper-root {
+  .MuiPaper-root:not(.MuiDrawer-paper) {
     margin-bottom: 12px !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
 
   /* Fix minWidth on Paper components */
-  .MuiPaper-root[style*="minWidth"] {
+  .MuiPaper-root[style*="minWidth"]:not(.MuiDrawer-paper) {
     min-width: 100% !important;
   }
 
@@ -49,9 +49,9 @@
   }
 
   /* Fix for inline styles with minWidth */
-  .css-phgwma-MuiPaper-root,
-  .MuiPaper-elevation,
-  .MuiPaper-elevation3 {
+  .css-phgwma-MuiPaper-root:not(.MuiDrawer-paper),
+  .MuiPaper-elevation:not(.MuiDrawer-paper):not(.MuiDialog-paper),
+  .MuiPaper-elevation3:not(.MuiDrawer-paper):not(.MuiDialog-paper) {
     min-width: 100% !important;
     margin-bottom: 12px !important;
   }
