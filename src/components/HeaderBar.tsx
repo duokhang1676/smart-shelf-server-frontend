@@ -132,7 +132,7 @@ const HeaderBar: React.FC = () => {
             // Desktop Navigation
             <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
               <Button color="inherit" onClick={() => navigate("/")} sx={{ ml: 2 }}>
-                <Dashboard />
+                Dashboard
               </Button>
               <Button color="inherit" onClick={() => navigate("/shelf")} sx={{ ml: 2 }}>
                 Quản lý kệ

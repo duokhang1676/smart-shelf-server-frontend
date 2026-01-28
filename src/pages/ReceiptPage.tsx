@@ -192,13 +192,13 @@ export default function ReceiptPage() {
 
   return (
     <Box p={2}>
-      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="center" justifyContent="space-between" mb={2}>
-        <Typography variant="h5">Quản lý hoá đơn</Typography>
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems={{ xs: "stretch", sm: "center" }} justifyContent="space-between" mb={2}>
+        <Typography variant="h4">Quản lý hoá đơn</Typography>
 
-        <Grid container spacing={2} sx={{ width: { xs: "100%", sm: "auto" } }}>
+        <Grid container spacing={2} sx={{ width: { xs: "100%", sm: "auto" }, flex: { xs: "1", sm: "0 1 auto" } }}>
           <Grid size={{ xs: 12, sm: 4 }}>
-            <Paper elevation={3} sx={{ display: "flex", alignItems: "center", gap: 2, p: 1.5, minWidth: { xs: "100%", sm: 150 }, width: "100%" }}>
-              <DangerousIcon sx={{ color: "error.main", fontSize: 30 }} />
+            <Paper elevation={3} sx={{ display: "flex", alignItems: "center", gap: 2, p: 2, width: "100%", boxSizing: "border-box", minWidth: { sm: "200px" } }}>
+              <DangerousIcon sx={{ color: "error.main", fontSize: 36 }} />
               <Box>
                 <Typography variant="caption" color="text.secondary">Không thanh toán</Typography>
                 <Typography variant="h6" sx={{ mt: 0.3 }}>{unPaidCount}</Typography>
@@ -207,8 +207,8 @@ export default function ReceiptPage() {
           </Grid>
 
           <Grid size={{ xs: 12, sm: 4 }}>
-            <Paper elevation={3} sx={{ display: "flex", alignItems: "center", gap: 2, p: 1.5, minWidth: { xs: "100%", sm: 150 }, width: "100%" }}>
-              <CheckCircleIcon sx={{ color: "success.main", fontSize: 30 }} />
+            <Paper elevation={3} sx={{ display: "flex", alignItems: "center", gap: 2, p: 2, width: "100%", boxSizing: "border-box", minWidth: { sm: "200px" } }}>
+              <CheckCircleIcon sx={{ color: "success.main", fontSize: 36 }} />
               <Box>
                 <Typography variant="caption" color="text.secondary">Đã thanh toán</Typography>
                 <Typography variant="h6" sx={{ mt: 0.3 }}>{paidCount}</Typography>
@@ -217,8 +217,8 @@ export default function ReceiptPage() {
           </Grid>
 
           <Grid size={{ xs: 12, sm: 4 }}>
-            <Paper elevation={3} sx={{ display: "flex", alignItems: "center", gap: 2, p: 1.5, minWidth: { xs: "100%", sm: 150 }, width: "100%" }}>
-              <HourglassTopIcon sx={{ color: "warning.main", fontSize: 30 }} />
+            <Paper elevation={3} sx={{ display: "flex", alignItems: "center", gap: 2, p: 2, width: "100%", boxSizing: "border-box", minWidth: { sm: "200px" } }}>
+              <HourglassTopIcon sx={{ color: "warning.main", fontSize: 36 }} />
               <Box>
                 <Typography variant="caption" color="text.secondary">Đang chờ</Typography>
                 <Typography variant="h6" sx={{ mt: 0.3 }}>{pendingCount}</Typography>

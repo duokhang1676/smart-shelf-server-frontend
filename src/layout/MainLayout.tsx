@@ -57,12 +57,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       {/* Main Content */}
       <main className="flex-grow" style={{ width: '100%' }}>
         <div 
-          className="max-w-7xl mx-auto"
           style={{
+            width: '100%',
+            maxWidth: '100%',
+            margin: '0 auto',
             paddingLeft: isSmallMobile ? '8px' : isMobile ? '16px' : '32px',
             paddingRight: isSmallMobile ? '8px' : isMobile ? '16px' : '32px',
             paddingTop: isMobile ? '16px' : '32px',
             paddingBottom: isMobile ? '16px' : '32px',
+            boxSizing: 'border-box',
           }}
         >
           {children || <Outlet />}
