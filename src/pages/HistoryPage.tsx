@@ -108,7 +108,7 @@ export default function HistoryPage() {
   return (
     <Box p={2}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h5">Lịch sử thay đổi</Typography>
+        <Typography variant="h4">Lịch sử thay đổi</Typography>
       </Stack>
 
       <Paper>
