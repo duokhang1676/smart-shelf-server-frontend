@@ -488,7 +488,7 @@ export default function ShelfInterface() {
   };
 
   return (
-    <Box sx={{ display: "flex", height: "100vh" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
       <Menu
         anchorEl={menuAnchor}
         open={Boolean(menuAnchor)}
@@ -616,33 +616,46 @@ export default function ShelfInterface() {
           )}
 
           {/* <MqttMessageViewer /> */}
-          <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-            Các mã lỗi:
-          </Typography>
-          <List dense sx={{ pl: 2 }}>
-            <ListItem
-              sx={{ display: "list-item", listStyleType: "disc", py: 0.5 }}
-            >
-              <ListItemText primary="255: lỗi loadcell" />
-            </ListItem>
-            <ListItem
-              sx={{ display: "list-item", listStyleType: "disc", py: 0.5 }}
-            >
-              <ListItemText primary="200: Số lượng sản phẩm trên ngăn vượt mức tối đa" />
-            </ListItem>
-            <ListItem
-              sx={{ display: "list-item", listStyleType: "disc", py: 0.5 }}
-            >
-              <ListItemText primary="222: Sản phẩm trên ngăn không đúng" />
-            </ListItem>
-          </List>
+          <Box
+            sx={{
+              p: 2,
+              mb: 2,
+              border: "1px solid",
+              borderColor: "divider",
+              borderRadius: 1,
+              backgroundColor: "background.paper",
+            }}
+          >
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 0.5 }}>
+              Các mã lỗi:
+            </Typography>
+            <List dense sx={{ pl: 0, py: 0 }}>
+              <ListItem
+                sx={{ display: "list-item", listStyleType: "disc", py: 0.25, ml: 2 }}
+              >
+                <ListItemText primary="255: lỗi loadcell" primaryTypographyProps={{ variant: "body2" }} />
+              </ListItem>
+              <ListItem
+                sx={{ display: "list-item", listStyleType: "disc", py: 0.25, ml: 2 }}
+              >
+                <ListItemText primary="200: Số lượng sản phẩm trên ngăn vượt mức tối đa" primaryTypographyProps={{ variant: "body2" }} />
+              </ListItem>
+              <ListItem
+                sx={{ display: "list-item", listStyleType: "disc", py: 0.25, ml: 2 }}
+              >
+                <ListItemText primary="222: Sản phẩm trên ngăn không đúng" primaryTypographyProps={{ variant: "body2" }} />
+              </ListItem>
+            </List>
+          </Box>
 
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
-              alignItems: "center",
+              alignItems: { xs: "flex-start", sm: "center" },
               mb: 2,
+              gap: 2,
             }}
           >
             <Typography variant="h4">
@@ -667,8 +680,10 @@ export default function ShelfInterface() {
             <Box
               sx={{
                 display: "flex",
-                alignItems: "center",
+                flexDirection: { xs: "column", sm: "row" },
+                alignItems: { xs: "stretch", sm: "center" },
                 gap: 2,
+                width: { xs: "100%", sm: "auto" },
               }}
             >
               {sidebarOpen ? (
@@ -677,15 +692,23 @@ export default function ShelfInterface() {
                   color="primary"
                   onClick={uploadAllLoadCells}
                   disabled={uploading}
+                  sx={{ width: { xs: "100%", sm: "auto" } }}
                 >
                   {uploading ? <CircularProgress size={20} color="inherit" /> : "Lưu"}
                 </Button>
               ) : (
-                <>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    width: { xs: "100%", sm: "auto" },
+                  }}
+                >
                   <Button
                     variant="contained"
                     color="primary"
                     onClick={handleOpenDialog}
+                    sx={{ flex: { xs: 1, sm: "initial" } }}
                   >
                     <AddIcon />
                     Thêm Kệ
@@ -696,10 +719,11 @@ export default function ShelfInterface() {
                     color="secondary"
                     onClick={() => setShelfInfoOpen(true)}
                     disabled={uploading}
+                    sx={{ flex: { xs: 1, sm: "initial" } }}
                   >
                     {uploading ? <CircularProgress size={20} color="inherit" /> : "Cập nhật"}
                   </Button>
-                </>
+                </Box>
               )}
 
               <Button
@@ -709,6 +733,7 @@ export default function ShelfInterface() {
                   setSidebarOpen(!sidebarOpen)
                   sidebarOpen ? setViewChangesMode(false) : setViewChangesMode(true)
                 }}
+                sx={{ width: { xs: "100%", sm: "auto" } }}
               >
                 {sidebarOpen ? "Hủy thay đổi" : "Thay đổi hàng hóa"}
               </Button>
@@ -734,6 +759,19 @@ export default function ShelfInterface() {
             <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
               {[0, 1, 2].map((level) => (
                 <Box key={level}>
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      mb: 2, 
+                      fontWeight: 'bold',
+                      color: 'primary.main',
+                      borderLeft: '4px solid',
+                      borderColor: 'primary.main',
+                      pl: 2
+                    }}
+                  >
+                    Tầng {level + 1}
+                  </Typography>
                   <Grid container spacing={2}>
                     {[0, 1, 2, 3, 4].map((compartment, index) => {
                       const cellIndex = level * 5 + compartment;
@@ -746,7 +784,7 @@ export default function ShelfInterface() {
                           : cell?.quantity ?? 0;
 
                       return (
-                        <Grid component="div" size={2.4} key={index}>
+                        <Grid component="div" size={{ xs: 6, sm: 4, md: 2.4 }} key={index}>
                           <ShelfCompartment
                             level={level}
                             quantity={quantity}

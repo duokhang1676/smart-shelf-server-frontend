@@ -251,7 +251,7 @@ export default function ComboPage() {
       <Grid container spacing={3}>
         {loading && (!combos || combos.length === 0) ? (
           Array.from({ length: 6 }).map((_, i) => (
-            <Grid size={4} key={i}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={i}>
               <Card>
                 <Skeleton variant="rectangular" height={160} />
                 <CardContent>
@@ -277,7 +277,7 @@ export default function ComboPage() {
             const productCount = (c as any).productSkus?.length ?? (c.products?.length ?? undefined);
 
             return (
-              <Grid size={4} key={c._id ?? (c as any).externalId ?? c.name}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={c._id ?? (c as any).externalId ?? c.name}>
                 <Card>
                   {c.image ? <CardMedia component="img" height="160" image={c.image} alt={c.name} /> : <Box sx={{ height: 160, bgcolor: "grey.100" }} />}
                   <CardContent>

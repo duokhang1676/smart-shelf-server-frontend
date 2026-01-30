@@ -112,7 +112,7 @@ export default function DashboardPage() {
   
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
       {/* Thống kê tổng quan */}
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 2, mb: 3 }}>
         <StatCard 
@@ -143,12 +143,12 @@ export default function DashboardPage() {
       </Box>
 
 
-      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-        <Box sx={{ flex: '1 1 70%', minWidth: 300 }}>
+      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', flexDirection: { xs: 'column', md: 'row' } }}>
+        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 70%' }, minWidth: { xs: '100%', md: 300 } }}>
           <StatsCharts products={topProducts} revenue={revenueSeries} />
         </Box>
-        <Box sx={{ flex: '1 1 5%', minWidth: 240 }}>
-          <Paper variant="outlined" sx={{ p: 2 }}>
+        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 5%' }, minWidth: { xs: '100%', md: 240 } }}>
+          <Paper variant="outlined" sx={{ p: 2, width: '100%' }}>
             <Typography variant="subtitle1" gutterBottom>
               Top sản phẩm
             </Typography>

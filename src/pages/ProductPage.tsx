@@ -276,7 +276,7 @@ export default function ProductManagement() {
               alignItems: "center",
             }}
           >
-            <Typography variant="h5" sx={{ ml: 2 }}>
+            <Typography variant="h4">
               Quản lý sản phẩm
             </Typography>
             <Button

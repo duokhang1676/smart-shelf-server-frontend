@@ -95,7 +95,7 @@ export default function ShelfRealtimePanel({
   };
 
   return (
-    <Paper sx={{ p: 2, ...sx }}>
+    <Paper sx={{ p: 2, ...sx, width: '100%', boxSizing: 'border-box' }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
         <Typography variant="h6">Dữ liệu kệ hàng</Typography>
         <Stack direction="row" spacing={1}>
@@ -106,8 +106,8 @@ export default function ShelfRealtimePanel({
       </Stack>
 
       <Grid container spacing={2}>
-        <Grid size={6}>
-          <Paper variant="outlined" sx={{ p: 1.5 }}>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Paper variant="outlined" sx={{ p: 1.5, width: '100%' }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Box>
                 <Typography variant="subtitle2">Cảm biến môi trường</Typography>
@@ -133,8 +133,8 @@ export default function ShelfRealtimePanel({
           </Paper>
         </Grid>
 
-        <Grid size={6}>
-          <Paper variant="outlined" sx={{ p: 1.5 }}>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Paper variant="outlined" sx={{ p: 1.5, width: '100%' }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Box>
                 <Typography variant="subtitle2">Trạng thái kệ</Typography>

@@ -148,7 +148,7 @@ export default function PostersPage() {
   return (
     <Box p={2}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h5">Quản lý Poster</Typography>
+        <Typography variant="h4">Quản lý Poster</Typography>
         <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>
           Thêm Poster
         </Button>
