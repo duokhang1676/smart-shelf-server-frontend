@@ -152,22 +152,11 @@ export default function ReceiptPage() {
     return () => controller.abort();
   }, [page, rowsPerPage, tab, debouncedQ]);
 
-  // Debounce search query
-  useUse statistics from server (accurate across all pages)
+  // Use statistics from server (accurate across all pages)
   const totalSales = serverStats.totalSales;
   const paidCount = serverStats.paidCount;
   const unPaidCount = serverStats.unpaidCount;
   const pendingCount = serverStats.pendingCount;
-  
-  const unPaidCount = useMemo(() => {
-    if (rows.length === 0) return 0;
-    return rows.filter((it) => (it._doc.status || "").toLowerCase() === "unpaid").length;
-  }, [rows]);
-  
-  const pendingCount = useMemo(() => {
-    if (rows.length === 0) return 0;
-    return rows.filter((it) => (it._doc.status || "").toLowerCase() === "pending").length;
-  }, [rows]);
 
   // Data is already paginated from server, no need to slice
   const paged = useMemo(() => {
