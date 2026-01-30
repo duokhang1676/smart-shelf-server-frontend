@@ -25,6 +25,8 @@ export default function DashboardPage() {
   const [topProducts, setTopProducts] = React.useState<{ name: string; count: number }[]>([]);
   const [revenueSeries, setRevenueSeries] = React.useState<{ period: string; revenue: number }[]>([]);
   const [overview, setOverview] = React.useState({ shelves: 0, products: 0, orders: 0, users: 0 });
+  const [totalRevenue, setTotalRevenue] = React.useState(0);
+  const [totalPaidOrders, setTotalPaidOrders] = React.useState(0);
 
   // connect to mqtt and subscribe topics
   const { connected, sensor, loadcellQuantities, tracking, status } = useMqtt({
@@ -45,16 +47,20 @@ export default function DashboardPage() {
     async function load() {
       try {
         setLoadingStats(true);
-        // top products
-  const topRes = await getTopProducts({ limit: 6 });
-  // topRes may be the axios "data" object: { success: true, data: { productStatistics: [...] } }
-  // or it may already be the inner data depending on service. Normalize possible shapes:
-  let prodStats: any[] = [];
-  if (Array.isArray(topRes?.data)) prodStats = topRes.data;
-  else if (Array.isArray(topRes?.data?.productStatistics)) prodStats = topRes.data.productStatistics;
-  else if (Array.isArray(topRes?.productStatistics)) prodStats = topRes.productStatistics;
-  else if (Array.isArray(topRes)) prodStats = topRes;
-  const top = prodStats.map((p: any) => ({ name: p.productName || p.product_name || p.name || 'Unknown', count: p.totalQuantitySold ?? p.totalQuantity ?? p.count ?? 0 }));
+        
+        // top products - API response: { success: true, data: { productStatistics: [...], summary: {...} } }
+        const topRes = await getTopProducts({ limit: 6 });
+        console.log('Top Products API Response:', topRes);
+        
+        // Extract productStatistics array từ response
+        const prodStats = topRes?.data?.productStatistics || [];
+        console.log('Product Statistics Array:', prodStats);
+        
+        const top = prodStats.map((p: any) => ({ 
+          name: p.productName || p.product_name || 'Unknown', 
+          count: p.totalQuantitySold || 0 
+        }));
+        console.log('Normalized Top Products:', top);
 
         // revenue series (monthly for last 6 months)
         const revRes = await getRevenueStatistics({ period: 'monthly', year: new Date().getFullYear() });
@@ -70,16 +76,22 @@ export default function DashboardPage() {
           return { period: label, revenue: s.totalRevenue ?? s.totalAmount ?? s.revenue ?? 0 };
         });
 
-        // overall product stats for counts
-  const prodRes = await getProductStats({ limit: 10 });
+        // overall product stats for counts - same API, different limit
+        const prodRes = await getProductStats({ limit: 0 });
+        console.log('Product Stats API Response:', prodRes);
 
         if (!mounted) return;
-        // extract product summary safely
-        const prodSummary = prodRes?.data?.summary ?? prodRes?.summary ?? prodRes?.data ?? {};
-        const revSummary = revRes?.data?.summary ?? revRes?.summary ?? revRes?.summary ?? {};
+        
+        // Extract summary từ response
+        const prodSummary = prodRes?.data?.summary || {};
+        const revSummary = revRes?.data?.summary || {};
+        console.log('Product Summary:', prodSummary);
+        console.log('Revenue Summary:', revSummary);
 
         setTopProducts(top);
         setRevenueSeries(revData);
+        setTotalRevenue(revSummary.totalRevenue ?? 0);
+        setTotalPaidOrders(revSummary.totalOrders ?? 0);
         setOverview({
           shelves: 0,
           products: prodSummary.uniqueProductCount ?? prodSummary.uniqueProducts ?? 0,
@@ -101,6 +113,26 @@ export default function DashboardPage() {
 
   return (
     <Box sx={{ p: 3 }}>
+      {/* Thống kê tổng quan */}
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 2, mb: 3 }}>
+        <StatCard 
+          title="Tổng doanh thu (đã thanh toán)" 
+          value={new Intl.NumberFormat('vi-VN').format(totalRevenue) + ' đ'}
+        />
+        <StatCard 
+          title="Đơn hàng đã thanh toán" 
+          value={totalPaidOrders}
+        />
+        <StatCard 
+          title="Sản phẩm đã bán" 
+          value={overview.products}
+        />
+        <StatCard 
+          title="Giá trị TB/đơn" 
+          value={totalPaidOrders > 0 ? new Intl.NumberFormat('vi-VN').format(Math.round(totalRevenue / totalPaidOrders)) + ' đ' : '0 đ'}
+        />
+      </Box>
+
       <Box sx={{ my: 2 }}>
         <ShelfRealtimePanel
           sensor={sensor}
