@@ -13,6 +13,7 @@ import ComboPage from "./pages/ComboPage";
 import HistoryPage from "./pages/HistoryPage";
 import PostersPage from "./pages/PostersPage";
 import ConfigPage from "./pages/ConfigPage";
+import NotificationPage from "./pages/NotificationPage";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/posters" element={<PostersPage />} />
           <Route path="/config" element={<ConfigPage />} />
+          <Route path="/notifications" element={<NotificationPage />} />
         </Route>
 
         <Route path="/login" element={<LoginPage />} />

@@ -7,6 +7,7 @@ export interface Notification {
   _id: string;
   message: string;
   type: "warning" | "info" | "error" | "success";
+  category?: "vibration" | "restock" | "low_stock" | "order" | "general";
   read: boolean;
   shelf_id?: string | null;
   load_cell_id?: string | null;
@@ -22,6 +23,7 @@ export interface Notification {
 export interface CreateNotificationRequest {
   message: string;
   type: "warning" | "info" | "error" | "success";
+  category?: "vibration" | "restock" | "low_stock" | "order" | "general";
   userId?: string;
   shelfId?: string;
   productId?: string;

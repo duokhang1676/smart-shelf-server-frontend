@@ -10,6 +10,7 @@ import {
   ListItemIcon,
   ListItemText,
   CircularProgress,
+  Button,
 } from "@mui/material";
 import {
   Notifications as NotificationsIcon,
@@ -17,6 +18,7 @@ import {
   Info as InfoIcon,
   Error as ErrorIcon,
   CheckCircle as SuccessIcon,
+  OpenInNew as OpenInNewIcon,
 } from "@mui/icons-material";
 import {
   getAllNotifications,
@@ -28,8 +30,10 @@ import {
   type Notification,
 } from "../service/notification.service";
 import { io } from "socket.io-client";
+import { useNavigate } from "react-router-dom";
 
 const NotificationBell: React.FC = () => {
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
@@ -101,6 +105,11 @@ const NotificationBell: React.FC = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleViewAll = () => {
+    setAnchorEl(null);
+    navigate("/notifications");
   };
 
   const handleNotificationClick = async (notificationId: string) => {
@@ -227,16 +236,28 @@ const NotificationBell: React.FC = () => {
         )}
 
         {notifications?.length > 0 && !loading && (
-          <Box sx={{ p: 1, borderTop: 1, borderColor: "divider" }}>
-            <Typography
-              variant="body2"
-              color="primary"
-              sx={{ cursor: "pointer", textAlign: "center" }}
-              onClick={handleMarkAllAsRead}
-            >
-              Mark all as read
-            </Typography>
-          </Box>
+          <>
+            <Divider />
+            <Box sx={{ p: 1.5, display: "flex", gap: 1, justifyContent: "space-between" }}>
+              <Button
+                variant="text"
+                size="small"
+                fullWidth
+                onClick={handleMarkAllAsRead}
+              >
+                Đánh dấu tất cả đã đọc
+              </Button>
+              <Button
+                variant="contained"
+                size="small"
+                fullWidth
+                endIcon={<OpenInNewIcon />}
+                onClick={handleViewAll}
+              >
+                Xem tất cả
+              </Button>
+            </Box>
+          </>
         )}
       </Menu>
     </>
