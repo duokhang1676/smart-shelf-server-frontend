@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import {
   Box,
   Button,
@@ -66,9 +66,17 @@ export default function ReceiptPage() {
   const [filtered, setFiltered] = useState<FetchAllOrderItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [totalRecords, setTotalRecords] = useState(0); // Total records from server
+  const [serverStats, setServerStats] = useState({
+    totalSales: 0,
+    paidCount: 0,
+    unpaidCount: 0,
+    pendingCount: 0,
+  }); // Aggregated statistics from server
 
   const [tab, setTab] = useState(0); // 0 All, 1 Paid, 2 Pending, 3 Cancelled
   const [q, setQ] = useState("");
+  const [debouncedQ, setDebouncedQ] = useState(""); // Debounced search query
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -78,32 +86,41 @@ export default function ReceiptPage() {
 
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  // Fetch
+  // Fetch with pagination - refetch when page/rowsPerPage/tab/debouncedQ changes
   useEffect(() => {
     const controller = new AbortController();
     (async () => {
       try {
         setLoading(true);
         setError(null);
-        const resp = await fetchAllReceipts(controller.signal);
+        
+        // Map tab to status filter
+        let statusFilter: string | undefined;
+        if (tab === 1) statusFilter = 'paid';
+        else if (tab === 2) statusFilter = 'unpaid';
+        else if (tab === 3) statusFilter = 'pending';
+        else if (tab === 4) statusFilter = 'cancelled';
+
+        const resp = await fetchAllReceipts(controller.signal, {
+          page: page + 1, // API uses 1-based pagination
+          limit: rowsPerPage,
+          status: statusFilter,
+          search: debouncedQ || undefined,
+        });
+        
         const listRaw = resp?.success && Array.isArray(resp.data) ? resp.data : [];
+        const total = resp?.pagination?.total || 0;
 
-        // Normalize API items into FetchAllOrderItem[] expected by the page
+        // Normalize API items into FetchAllOrderItem[]
         const list: FetchAllOrderItem[] = listRaw.map((it: any) => {
-          // already in {_doc, details} shape
           if (it._doc && Array.isArray(it.details)) return it as FetchAllOrderItem;
-
-          // API returned { order, details } shape
           if (it.order) {
             return {
               _doc: it.order as OrderDoc,
               details: Array.isArray(it.details) ? it.details : [],
-              // keep any extra metadata
               ...it,
             } as FetchAllOrderItem;
           }
-
-          // fallback: try to coerce
           const doc = it.order ?? it._doc ?? it;
           return {
             _doc: doc as OrderDoc,
@@ -112,65 +129,50 @@ export default function ReceiptPage() {
         });
 
         setRows(list);
-        setFiltered(list);
+        setFiltered(list); // Since filtering is now server-side
+        setTotalRecords(total);
+        
+        // Update statistics from server
+        if (resp?.statistics) {
+          setServerStats({
+            totalSales: resp.statistics.totalSales || 0,
+            paidCount: resp.statistics.paidCount || 0,
+            unpaidCount: resp.statistics.unpaidCount || 0,
+            pendingCount: resp.statistics.pendingCount || 0,
+          });
+        }
       } catch (e: any) {
-        setError(e?.message || "Lỗi tải dữ liệu");
+        if (e.name !== 'AbortError') {
+          setError(e?.message || "Lỗi tải dữ liệu");
+        }
       } finally {
         setLoading(false);
       }
     })();
     return () => controller.abort();
-  }, []);
+  }, [page, rowsPerPage, tab, debouncedQ]);
 
-  // Filter
-  useEffect(() => {
-    let result = rows.filter((it) => {
-      const order: OrderDoc = it._doc;
-      const details: OrderDetail[] = it.details ?? [];
-
-      // Tab
-      const st = (order.status || "").toLowerCase();
-      if (tab === 1 && st !== "paid") return false;
-      if (tab === 2 && st !== "unpaid") return false;
-      if (tab === 3 && st !== "pending") return false;
-      if (tab === 4 && !(st === "cancelled" || st === "refunded")) return false;
-
-      // Search
-      if (q) {
-        const query = q.toLowerCase();
-        const matchesOrder = String(order.order_code ?? order._id ?? "").toLowerCase().includes(query);
-        const matchesProduct = details.some((d) => {
-          const prod = d.product_id as any;
-          const pname = typeof prod === "object" ? (prod?.product_name ?? prod?.name) : (d as any)?.product_name;
-          return String(pname ?? "").toLowerCase().includes(query);
-        });
-        if (!(matchesOrder || matchesProduct)) return false;
-      }
-
-      return true;
-    });
-
-    setFiltered(result);
-    setPage(0);
-  }, [rows, tab, q]);
-
-  const totalSales = useMemo(() => {
-    return rows.reduce((sum, it) => {
-      const o = it._doc;
-      const amt = Number(o.total_bill ?? o.total ?? 0);
-      const st = String(o.status || "").toLowerCase();
-      return sum + (st === "cancelled" ? 0 : amt);
-    }, 0);
+  // Debounce search query
+  useUse statistics from server (accurate across all pages)
+  const totalSales = serverStats.totalSales;
+  const paidCount = serverStats.paidCount;
+  const unPaidCount = serverStats.unpaidCount;
+  const pendingCount = serverStats.pendingCount;
+  
+  const unPaidCount = useMemo(() => {
+    if (rows.length === 0) return 0;
+    return rows.filter((it) => (it._doc.status || "").toLowerCase() === "unpaid").length;
+  }, [rows]);
+  
+  const pendingCount = useMemo(() => {
+    if (rows.length === 0) return 0;
+    return rows.filter((it) => (it._doc.status || "").toLowerCase() === "pending").length;
   }, [rows]);
 
-  const paidCount = useMemo(() => rows.filter((it) => (it._doc.status || "").toLowerCase() === "paid").length, [rows]);
-  const unPaidCount = useMemo(() => rows.filter((it) => (it._doc.status || "").toLowerCase() === "unpaid").length, [rows]);
-  const pendingCount = useMemo(() => rows.filter((it) => (it._doc.status || "").toLowerCase() === "pending").length, [rows]);
-
+  // Data is already paginated from server, no need to slice
   const paged = useMemo(() => {
-    const start = page * rowsPerPage;
-    return filtered.slice(start, start + rowsPerPage);
-  }, [filtered, page, rowsPerPage]);
+    return filtered; // filtered is already the current page
+  }, [filtered]);
 
   const openDetail = (item: FetchAllOrderItem) => {
     setCurrent(item);
@@ -315,7 +317,7 @@ export default function ReceiptPage() {
         </TableContainer>
         <TablePagination
           component="div"
-          count={filtered.length}
+          count={totalRecords}
           page={page}
           onPageChange={(_, p) => setPage(p)}
           rowsPerPage={rowsPerPage}
@@ -323,7 +325,7 @@ export default function ReceiptPage() {
             setRowsPerPage(parseInt(e.target.value, 10));
             setPage(0);
           }}
-          rowsPerPageOptions={[5, 10, 25, 50]}
+          rowsPerPageOptions={[5, 10, 25, 50, 100]}
         />
       </Paper>
 

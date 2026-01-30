@@ -4,8 +4,22 @@ const API_URL = import.meta.env.VITE_API_ENDPOINT;
 const IMG_PREFIX = import.meta.env.VITE_PREFIX_IMAGE;
 
 /** Lấy toàn bộ orders (đúng payload bạn gửi: giữ nguyên _doc, $__ ...) */
-export async function fetchAllReceipts(signal?: AbortSignal) {
-  const res = await axios.get<FetchAllOrdersResponse>(API_URL + "/orders", { signal });
+export async function fetchAllReceipts(signal?: AbortSignal, params?: {
+  page?: number;
+  limit?: number;
+  status?: string;
+  search?: string;
+}) {
+  const queryParams = new URLSearchParams();
+  if (params?.page) queryParams.append('page', String(params.page));
+  if (params?.limit) queryParams.append('limit', String(params.limit));
+  if (params?.status) queryParams.append('status', params.status);
+  if (params?.search) queryParams.append('search', params.search);
+
+  const res = await axios.get<FetchAllOrdersResponse>(
+    API_URL + "/orders" + (queryParams.toString() ? `?${queryParams.toString()}` : ""),
+    { signal }
+  );
 
   // ensure prefix normalized (no trailing slash)
   const prefix = (IMG_PREFIX ?? "").replace(/\/+$/, "");

@@ -51,5 +51,5 @@ export async function updateUser(id: string, payload: Partial<User>): Promise<Us
 }
 
 export async function deleteUser(id: string): Promise<void> {
-  await api.delete(`/users/${id}`);
+  await axios.delete(`${apiUrl}/users/${id}`);
 }

@@ -60,7 +60,7 @@ import {
   CheckCircle as CheckCircleIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { getUsers, updateUser } from "../service/user.service";
+import { getUsers, updateUser, deleteUser } from "../service/user.service";
 import { Gender, Role, User } from "../types/userTypes";
 
 // Role theo BE mới
@@ -269,15 +269,28 @@ export default function UserManagement() {
     setDeleteDialogOpen(true);
   };
 
-  const confirmDeleteUser = () => {
+  const confirmDeleteUser = async () => {
     if (currentUser) {
-      setUsers((prev) => prev.filter((u) => u._id !== currentUser._id));
-      setSnackbar({
-        open: true,
-        message: `Đã xóa ${currentUser.fullName || currentUser.username}`,
-        severity: "success",
-      });
-      setDeleteDialogOpen(false);
+      try {
+        await deleteUser(currentUser._id);
+        
+        // Cập nhật state local
+        setUsers((prev) => prev.filter((u) => u._id !== currentUser._id));
+        
+        setSnackbar({
+          open: true,
+          message: `Đã xóa ${currentUser.fullName || currentUser.username}`,
+          severity: "success",
+        });
+        setDeleteDialogOpen(false);
+      } catch (err) {
+        console.error(err);
+        setSnackbar({
+          open: true,
+          message: "Lỗi khi xóa người dùng",
+          severity: "error",
+        });
+      }
     }
   };
 
