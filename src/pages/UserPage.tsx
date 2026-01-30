@@ -496,6 +496,10 @@ export default function UserManagement() {
                   onChange={(e) => setRoleFilter(e.target.value as Role | "")}
                   label="Vai trò"
                   displayEmpty
+                  renderValue={(selected) => {
+                    if (!selected) return "Tất cả vai trò";
+                    return getRoleLabel(selected as Role);
+                  }}
                 >
                   <MenuItem value="">Tất cả vai trò</MenuItem>
                   {roles.map((role) => (
@@ -516,6 +520,10 @@ export default function UserManagement() {
                   }
                   label="Trạng thái"
                   displayEmpty
+                  renderValue={(selected) => {
+                    if (!selected) return "Tất cả";
+                    return selected === "active" ? "Hoạt động" : "Không hoạt động";
+                  }}
                 >
                   <MenuItem value="">Tất cả</MenuItem>
                   <MenuItem value="active">Hoạt động</MenuItem>
@@ -895,7 +903,7 @@ export default function UserManagement() {
                     >
                       {genders.map((g) => (
                         <MenuItem key={g} value={g}>
-                          {g}
+                          {getGenderLabel(g)}
                         </MenuItem>
                       ))}
                     </Select>
@@ -912,7 +920,7 @@ export default function UserManagement() {
                     >
                       {roles.map((r) => (
                         <MenuItem key={r} value={r}>
-                          {r}
+                          {getRoleLabel(r)}
                         </MenuItem>
                       ))}
                     </Select>

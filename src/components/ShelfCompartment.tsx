@@ -251,24 +251,24 @@ const ShelfCompartment: React.FC<ShelfCompartmentProps> = ({
           <div
             style={{
               width: "100%",
-              background: "rgba(0,0,0,0.5)",
+              background: "rgba(0,0,0,0.6)",
               color: "#fff",
-              padding: 4,
+              padding: 8,
               fontSize: "16px",
               textAlign: "center",
             }}
           >
             <Typography
-              variant="caption"
+              variant="body1"
               noWrap
-              sx={{ width: "100%", fontWeight: "bold" }}
+              sx={{ width: "100%", fontWeight: "bold", fontSize: "1rem" }}
             >
               {localProduct.product_name}
             </Typography>
             <Typography
-              variant="caption"
+              variant="body2"
               color="inherit"
-              sx={{ display: "block" }}
+              sx={{ display: "block", fontSize: "0.95rem", fontWeight: 500 }}
             >
               Giá:{" "}
               {localProduct.price
@@ -276,17 +276,18 @@ const ShelfCompartment: React.FC<ShelfCompartmentProps> = ({
                 : "N/A"}
             </Typography>
             <Typography
-              variant="caption"
+              variant="body2"
               color="inherit"
-              sx={{ display: "block" }}
+              sx={{ display: "block", fontSize: "0.95rem", fontWeight: 600 }}
             >
               Số lượng: {displayQuantity !== undefined ? displayQuantity : "N/A"} -
               <Typography
-                variant="caption"
+                component="span"
                 color="text.white"
                 fontWeight="bold"
+                sx={{ fontSize: "0.95rem" }}
               >
-                Ngưỡng: {localThreshold}
+                {" "}Ngưỡng: {localThreshold}
               </Typography>
             </Typography>
           </div>
