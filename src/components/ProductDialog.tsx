@@ -223,9 +223,13 @@ const ProductDialog: React.FC<ProductDialogProps> = ({
                   label="Số lượng (kho)"
                   type="number"
                   value={formData.stock}
-                  onChange={(e) =>
-                    setFormData({ ...formData, stock: Number.parseInt(e.target.value) || 0 })
-                  }
+                  disabled
+                  helperText="Tự động tính từ tổng số lượng trên các ngăn kệ"
+                  slotProps={{
+                    input: {
+                      readOnly: true,
+                    },
+                  }}
                 />
               </Grid>
 
