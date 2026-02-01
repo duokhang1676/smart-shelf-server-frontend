@@ -305,24 +305,38 @@ export default function UserManagement() {
     }
 
     try {
+      // Chuẩn bị dữ liệu update
+      let updatePayload: any = {
+        username: formData.username,
+        rfid: formData.rfid,
+        email: formData.email,
+        fullName: formData.fullName,
+        phone: formData.phone,
+        address: formData.address,
+        dateOfBirth: formData.dateOfBirth
+          ? new Date(formData.dateOfBirth).toISOString()
+          : undefined,
+        gender: formData.gender,
+        role: formData.role,
+        isActive: formData.isActive,
+        emailVerified: formData.emailVerified,
+      };
+
+      // Nếu có file ảnh avatar
+      if (avatarFile) {
+        const formDataUpload = new FormData();
+        formDataUpload.append('avatar', avatarFile);
+        Object.keys(updatePayload).forEach(key => {
+          if (updatePayload[key] !== undefined && updatePayload[key] !== null) {
+            formDataUpload.append(key, String(updatePayload[key]));
+          }
+        });
+        updatePayload = formDataUpload;
+      }
+
       if (currentUser) {
         // Gọi API update
-        const updated = await updateUser(currentUser._id, {
-          username: formData.username,
-          rfid: formData.rfid,
-          email: formData.email,
-          fullName: formData.fullName,
-          phone: formData.phone,
-          avatar: formData.avatar,
-          address: formData.address,
-          dateOfBirth: formData.dateOfBirth
-            ? new Date(formData.dateOfBirth).toISOString()
-            : undefined,
-          gender: formData.gender,
-          role: formData.role,
-          isActive: formData.isActive,
-          emailVerified: formData.emailVerified,
-        });
+        const updated = await updateUser(currentUser._id, updatePayload);
 
         // Cập nhật state local
         setUsers((prev) =>
@@ -339,6 +353,7 @@ export default function UserManagement() {
       }
 
       setDialogOpen(false);
+      setAvatarFile(null);
     } catch (err) {
       console.error(err);
       setSnackbar({
@@ -355,16 +370,19 @@ export default function UserManagement() {
     );
   };
 
-  // Avatar upload demo
+  // Avatar upload
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const handleAvatarUpload = () => fileInputRef.current?.click();
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Ở production nên upload lên server/CDN, ở đây tạm fake url
-      const url = `/placeholder.svg?height=100&width=100&text=${encodeURIComponent(
-        file.name
-      )}`;
-      setFormData((prev) => ({ ...prev, avatar: url }));
+      setAvatarFile(file);
+      // Preview ảnh
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prev) => ({ ...prev, avatar: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
