@@ -54,6 +54,8 @@ import {
   deleteProduct,
   getProductById,
 } from "../service/product.service";
+import { getHistories } from "../service/history.service";
+import { fetchAllReceipts } from "../service/receipt.service";
 
 export default function ProductManagement() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -79,12 +81,86 @@ export default function ProductManagement() {
     (async () => {
       try {
         const result = await fetchProducts();
-        setProducts(result ?? []);
+        const productsWithStock = await calculateStockForProducts(result ?? []);
+        setProducts(productsWithStock);
       } catch (e) {
         setProducts([]);
       }
     })();
   }, []);
+
+  // Hàm tính stock cho tất cả sản phẩm
+  const calculateStockForProducts = async (productList: Product[]) => {
+    try {
+      // Lấy tất cả lịch sử và đơn hàng
+      const [historyRes, ordersRes] = await Promise.all([
+        getHistories({ limit: 10000 }), // Lấy tất cả lịch sử
+        fetchAllReceipts(undefined, { limit: 10000 }) // Lấy tất cả đơn hàng
+      ]);
+
+      const histories = historyRes?.data ?? [];
+      const orders = ordersRes?.data ?? [];
+
+      // Tính toán cho từng sản phẩm
+      return productList.map(product => {
+        const productId = product._id || product.product_id;
+
+        // 1. Tính số lượng thêm vào từ lịch sử
+        let totalAdded = 0;
+        histories.forEach(history => {
+          const postProducts = Array.isArray(history.post_products) ? history.post_products : [];
+          const preProducts = Array.isArray(history.pre_products) ? history.pre_products : [];
+          const postQuantities = Array.isArray(history.post_verified_quantity) ? history.post_verified_quantity : [];
+          const preQuantities = Array.isArray(history.pre_verified_quantity) ? history.pre_verified_quantity : [];
+
+          // Tìm index của sản phẩm trong post_products
+          const postIndex = postProducts.findIndex((p: any) => {
+            const pId = typeof p === 'object' ? (p._id || p.product_id) : p;
+            return pId === productId;
+          });
+
+          // Tìm index của sản phẩm trong pre_products
+          const preIndex = preProducts.findIndex((p: any) => {
+            const pId = typeof p === 'object' ? (p._id || p.product_id) : p;
+            return pId === productId;
+          });
+
+          const postQty = postIndex >= 0 ? (postQuantities[postIndex] || 0) : 0;
+          const preQty = preIndex >= 0 ? (preQuantities[preIndex] || 0) : 0;
+
+          totalAdded += (postQty - preQty);
+        });
+
+        // 2. Tính số lượng bán ra từ đơn hàng
+        let totalSold = 0;
+        orders.forEach((orderData: any) => {
+          const details = orderData.details || orderData.orderDetails || [];
+          details.forEach((detail: any) => {
+            const detailProductId = typeof detail.product_id === 'object' 
+              ? (detail.product_id._id || detail.product_id.product_id)
+              : detail.product_id;
+            
+            if (detailProductId === productId) {
+              totalSold += (detail.quantity || 0);
+            }
+          });
+        });
+
+        // 3. Tính stock = tổng thêm vào - tổng bán ra
+        const calculatedStock = totalAdded - totalSold;
+
+        return {
+          ...product,
+          in_stock: totalAdded,
+          out_stock: totalSold,
+          stock: calculatedStock
+        };
+      });
+    } catch (error) {
+      console.error("Error calculating stock:", error);
+      return productList; // Trả về danh sách gốc nếu lỗi
+    }
+  };
 
   // Lọc + sắp xếp từ products (không tạo state phụ)
   const filteredProducts = useMemo(() => {
@@ -220,7 +296,9 @@ export default function ProductManagement() {
         const createdId = created?._id || created?.product_id;
         const normalized = createdId ? await getProductById(String(createdId)) : created;
 
-        setProducts(prev => [...prev, (normalized ?? created)]);
+        // Tính stock cho sản phẩm mới
+        const productsWithStock = await calculateStockForProducts([normalized ?? created]);
+        setProducts(prev => [...prev, productsWithStock[0]]);
 
         setSnackbar({
           open: true,
