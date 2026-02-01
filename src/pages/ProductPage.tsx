@@ -373,7 +373,9 @@ export default function ProductManagement() {
                     }
                   >
                     {viewMode === "grid" ? (
-        setProducts(prev => [...prev, (normalized ?? created)
+                      <ViewListIcon />
+                    ) : (
+                      <ViewModuleIcon />
                     )}
                   </IconButton>
                 </Tooltip>
