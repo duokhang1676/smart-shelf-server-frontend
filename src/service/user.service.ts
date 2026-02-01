@@ -2,10 +2,16 @@ import axios from "axios";
 import { CreateUserDTO, UpdateUserDTO, User } from "../types/userTypes";
 const apiUrl = import.meta.env.VITE_API_ENDPOINT;
 
-
+// Helper để lấy token và tạo headers
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 export async function getUsers(): Promise<User[]> {
-  const res = await axios.get(apiUrl + "/users");
+  const res = await axios.get(apiUrl + "/users", {
+    headers: getAuthHeaders()
+  });
   return res.data; // data là mảng user từ BE
 }
 
@@ -41,15 +47,21 @@ const mapUser = (u: any): User => ({
 });
 
 export async function createUser(payload: CreateUserDTO): Promise<User> {
-  const { data } = await api.post(apiUrl + '/users', payload);
+  const { data } = await api.post(apiUrl + '/users', payload, {
+    headers: getAuthHeaders()
+  });
   return mapUser(data);
 }
 
 export async function updateUser(id: string, payload: Partial<User>): Promise<User> {
-  const res = await axios.put(`${apiUrl}/users/${id}`, payload);
+  const res = await axios.put(`${apiUrl}/users/${id}`, payload, {
+    headers: getAuthHeaders()
+  });
   return res.data; // BE trả về user đã update
 }
 
 export async function deleteUser(id: string): Promise<void> {
-  await axios.delete(`${apiUrl}/users/${id}`);
+  await axios.delete(`${apiUrl}/users/${id}`, {
+    headers: getAuthHeaders()
+  });
 }
