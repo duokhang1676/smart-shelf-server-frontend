@@ -426,44 +426,17 @@ export default function ShelfInterface() {
     );
   };
 
-  // Create notification via API
+  // DEPRECATED: Backend tự động tạo notification qua MQTT
+  // Hàm này không còn được sử dụng vì ShelfCompartment đã xóa logic gọi
   const handleCreateNotification = async (
     loadCellId: string,
     product: Product | null,
     quantity: number,
     threshold?: number
   ) => {
-    try {
-      const prodName = product?.product_name ?? "Sản phẩm";
-      const shelfId = activeShelf?.shelf_id ?? undefined;
-      let msg = "";
-
-      if (quantity === 0) {
-        msg = `Hết hàng: ${prodName} (tầng ${loadCells.find(item => item._id === loadCellId)?.floor} ngăn thứ ${loadCells.find(item => item._id === loadCellId)?.column}) ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name}`;
-      } else if (quantity === 200) {
-        msg = `Cảnh báo: Số lượng sản phẩm trên (tầng ${loadCells.find(item => item._id === loadCellId)?.floor} ngăn thứ ${loadCells.find(item => item._id === loadCellId)?.column}) ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name} vượt số lượng tối đa`;
-      } else if (quantity === 222) {
-        msg = `Cảnh báo: Sản phẩm trên (tầng ${loadCells.find(item => item._id === loadCellId)?.floor} ngăn thứ ${loadCells.find(item => item._id === loadCellId)?.column}) ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name} không đúng`;
-      } else {
-        msg = `Cảnh báo: ${prodName} sắp hết (tầng ${loadCells.find(item => item._id === loadCellId)?.floor} ngăn thứ ${loadCells.find(item => item._id === loadCellId)?.column})} ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name}`;
-      }
-
-      console.log(msg);
-      
-
-      const payload: CreateNotificationRequest = {
-        message: msg,
-        type: quantity === 0 || quantity === 200 || quantity === 255 || quantity === 222 ? "error" : "warning",
-        shelfId: shelfId,
-        productId: product?._id,
-      };
-
-      await createNotification(payload);
-      // optionally show a short UI hint
-      console.log("Notification created:", msg);
-    } catch (e) {
-      console.error("Failed to create notification:", e);
-    }
+    // Backend đã xử lý notification qua MQTT handler
+    // Không cần tạo từ frontend nữa
+    console.log("Notification sẽ được tạo tự động từ backend");
   };
 
   return (

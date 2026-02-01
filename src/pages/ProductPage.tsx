@@ -462,7 +462,7 @@ export default function ProductManagement() {
                       )}
                     </Box>
                   </TableCell>
-                  <TableCell>Kho</TableCell>
+
                   <TableCell>Cân nặng</TableCell>
                   <TableCell>Số lượng tối đa</TableCell>
                   <TableCell>Khuyến mãi (%)</TableCell>
@@ -492,7 +492,6 @@ export default function ProductManagement() {
                           ? `$${product.price.toFixed(2)}`
                           : product.price}
                       </TableCell>
-                      <TableCell>{(product as any).stock ?? "-"}</TableCell>
                       <TableCell>{(product as any).weight ?? "-"}</TableCell>
                       <TableCell>
                         {(product as any).max_quantity ?? "-"}

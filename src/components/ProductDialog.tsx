@@ -254,17 +254,6 @@ const ProductDialog: React.FC<ProductDialogProps> = ({
                     variant="outlined"
                   />
                 </Grid>
-                <Grid size={12}>
-                  <TextField
-                    fullWidth
-                    label="Số lượng trong kho"
-                    type="number"
-                    value={formData.stock}
-                    disabled
-                    helperText="Được tính tự động từ lịch sử thêm hàng và đơn hàng"
-                    variant="outlined"
-                  />
-                </Grid>
               </Grid>
             </Paper>
           </Grid>
@@ -315,19 +304,6 @@ const ProductDialog: React.FC<ProductDialogProps> = ({
                     InputProps={{
                       endAdornment: <InputAdornment position="end">%</InputAdornment>,
                     }}
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid size={{md: 12, xs: 12}}>
-                  <TextField
-                    fullWidth
-                    label="Ngưỡng cảnh báo hết hàng"
-                    type="number"
-                    value={formData.threshold}
-                    onChange={(e) =>
-                      setFormData({ ...formData, threshold: Number(e.target.value) || 1 })
-                    }
-                    helperText="Sẽ cảnh báo khi số lượng trên kệ <= ngưỡng này"
                     variant="outlined"
                   />
                 </Grid>
