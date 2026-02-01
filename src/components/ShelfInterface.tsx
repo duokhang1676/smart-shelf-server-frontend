@@ -71,24 +71,7 @@ export default function ShelfInterface() {
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [taskDialogOpen, setTaskDialogOpen] = useState(false);
-  const [realtimeQuantities, setRealtimeQuantities] = useState<number[]>(() => {
-    try {
-      const raw = localStorage.getItem("realtime_quantity");
-      if (!raw) return [];
-      // try JSON first
-      try {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) return parsed.map((v) => Number(v) || 0);
-      } catch { /* not JSON, fallback */ }
-      // fallback: comma/whitespace separated string (e.g. "1,2,3")
-      return String(raw)
-        .split(/[\s,;]+/)
-        .map((s) => Number(s))
-        .filter((n) => !Number.isNaN(n));
-    } catch (e) {
-      return [];
-    }
-  });
+  const [realtimeQuantities, setRealtimeQuantities] = useState<number[]>([]);
 
   const [hasProductChange, setHasProductChange] = useState(false);
   const [viewChangesMode, setViewChangesMode] = useState(false);
@@ -175,7 +158,6 @@ export default function ShelfInterface() {
           if (obj && Array.isArray(obj.values)) {
             const vals = obj.values.map((v: any) => Number(v) || 0);
             console.log(vals);
-            localStorage.setItem("realtime_quantity", JSON.stringify(vals));
             setRealtimeQuantities(vals);
           }
         } catch (e) {

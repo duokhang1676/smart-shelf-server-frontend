@@ -96,6 +96,8 @@ export default function useMqtt(opts?: {
           setTracking(data);
           try { localStorage.setItem("last_tracking", JSON.stringify(data)); } catch {}
         } else if (topic.includes("status") || topic.endsWith("/status/data")) {
+          console.log(data);
+          
           setStatus(data);
           try { localStorage.setItem("last_status", JSON.stringify(data)); } catch {}
         } else {
