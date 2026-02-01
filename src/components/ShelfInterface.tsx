@@ -439,13 +439,13 @@ export default function ShelfInterface() {
       let msg = "";
 
       if (quantity === 0) {
-        msg = `Hết hàng: ${prodName} (ngăn ${loadCells.find(item => item._id === loadCellId)?.floor} - ${loadCells.find(item => item._id === loadCellId)?.column}) ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name}`;
+        msg = `Hết hàng: ${prodName} (tầng ${loadCells.find(item => item._id === loadCellId)?.floor} ngăn thứ ${loadCells.find(item => item._id === loadCellId)?.column}) ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name}`;
       } else if (quantity === 200) {
-        msg = `Cảnh báo: Số lượng sản phẩm trên (ngăn ${loadCells.find(item => item._id === loadCellId)?.floor} - ${loadCells.find(item => item._id === loadCellId)?.column}) ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name} vượt số lượng tối đa`;
+        msg = `Cảnh báo: Số lượng sản phẩm trên (tầng ${loadCells.find(item => item._id === loadCellId)?.floor} ngăn thứ ${loadCells.find(item => item._id === loadCellId)?.column}) ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name} vượt số lượng tối đa`;
       } else if (quantity === 222) {
-        msg = `Cảnh báo: Sản phẩm trên (ngăn ${loadCells.find(item => item._id === loadCellId)?.floor} - ${loadCells.find(item => item._id === loadCellId)?.column}) ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name} không đúng`;
+        msg = `Cảnh báo: Sản phẩm trên (tầng ${loadCells.find(item => item._id === loadCellId)?.floor} ngăn thứ ${loadCells.find(item => item._id === loadCellId)?.column}) ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name} không đúng`;
       } else {
-        msg = `Cảnh báo: ${prodName} sắp hết (ngăn ${loadCells.find(item => item._id === loadCellId)?.floor} - ${loadCells.find(item => item._id === loadCellId)?.column})} ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name}`;
+        msg = `Cảnh báo: ${prodName} sắp hết (tầng ${loadCells.find(item => item._id === loadCellId)?.floor} ngăn thứ ${loadCells.find(item => item._id === loadCellId)?.column})} ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name}`;
       }
 
       console.log(msg);
