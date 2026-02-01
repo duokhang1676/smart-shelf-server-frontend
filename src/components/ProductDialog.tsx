@@ -244,43 +244,22 @@ const ProductDialog: React.FC<ProductDialogProps> = ({
                     variant="outlined"
                   />
                 </Grid>
+                <Grid size={12}>
+                  <TextField
+                    fullWidth
+                    label="Số lượng trong kho"
+                    type="number"
+                    value={formData.stock}
+                    disabled
+                    helperText="Được tính tự động từ lịch sử thêm hàng và đơn hàng"
+                    variant="outlined"
+                  />
+                </Grid>
               </Grid>
             </Paper>
           </Grid>
 
-          {/* Stock Information Section */}
-          <Grid size={12}>
-            <Paper elevation={2} sx={{ p: 2, borderRadius: 2 }}>
-              <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
-                <InventoryIcon sx={{ mr: 1 }} />
-                Thông tin kho
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid size={{md: 4, xs: 12}}>
-                  <TextField
-                    fullWidth
-                    label="Số lượng thêm vào"
-                    type="number"
-                    value={formData.in_stock}
-                    disabled
-                    helperText="Tổng số lượng nhập từ lịch sử"
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid size={{md: 4, xs: 12}}>
-                  <TextField
-                    fullWidth
-                    label="Số lượng bán ra"
-                    type="number"
-                    value={formData.out_stock}
-                    disabled
-                    helperText="Tổng số lượng xuất từ đơn hàng"
-                    variant="outlined"
-                  />
-                </Grid>
-              </Grid>
-            </Paper>
-          </Grid>
+          {/* Stock Information Section - REMOVED as per request */}
 
           {/* Additional Information Section */}
           <Grid size={12}>
