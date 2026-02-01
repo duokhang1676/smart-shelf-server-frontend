@@ -166,6 +166,18 @@ const NotificationPage: React.FC = () => {
     });
 
     socket.on("new-notification", (notification: Notification) => {
+      // Bỏ qua thông báo loadcell có giá trị 255
+      const has255 = notification.message && notification.message.includes('255');
+      const isLoadcellNotif = notification.message && (
+        notification.message.includes('hết hàng') || 
+        notification.message.includes('sắp hết') ||
+        notification.category === 'low_stock'
+      );
+      
+      if (has255 && isLoadcellNotif) {
+        return; // Không thêm vào danh sách
+      }
+      
       setNotifications((prev) => [notification, ...prev]);
       setUnreadCount((prev) => prev + 1);
     });
@@ -180,7 +192,24 @@ const NotificationPage: React.FC = () => {
       setLoading(true);
       setError(null);
       const response = await getAllNotifications(page, limit);
-      setNotifications(response.notifications);
+      
+      // Lọc bỏ các thông báo có chứa "255" (lỗi loadcell)
+      const filteredNotifs = response.notifications.filter((n: Notification) => {
+        // Kiểm tra nếu message có chứa số 255 và là thông báo về loadcell/hết hàng
+        const has255 = n.message && n.message.includes('255');
+        const isLoadcellNotif = n.message && (
+          n.message.includes('hết hàng') || 
+          n.message.includes('sắp hết') ||
+          n.category === 'low_stock'
+        );
+        // Bỏ qua nếu là thông báo loadcell có giá trị 255
+        if (has255 && isLoadcellNotif) {
+          return false;
+        }
+        return true;
+      });
+      
+      setNotifications(filteredNotifs);
       setTotalPages(response.totalPages);
     } catch (err) {
       console.error("Error fetching notifications:", err);

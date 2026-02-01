@@ -444,10 +444,7 @@ export default function ShelfInterface() {
         msg = `Cảnh báo: Số lượng sản phẩm trên (ngăn ${loadCells.find(item => item._id === loadCellId)?.floor} - ${loadCells.find(item => item._id === loadCellId)?.column}) ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name} vượt số lượng tối đa`;
       } else if (quantity === 222) {
         msg = `Cảnh báo: Sản phẩm trên (ngăn ${loadCells.find(item => item._id === loadCellId)?.floor} - ${loadCells.find(item => item._id === loadCellId)?.column}) ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name} không đúng`;
-      } else if (quantity === 255) {
-        msg = `Cảnh báo: Ngăn ${loadCells.find(item => item._id === loadCellId)?.floor} - ${loadCells.find(item => item._id === loadCellId)?.column} ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name} lỗi loadcell`;
-      }
-      else {
+      } else {
         msg = `Cảnh báo: ${prodName} sắp hết (ngăn ${loadCells.find(item => item._id === loadCellId)?.floor} - ${loadCells.find(item => item._id === loadCellId)?.column})} ở ${shelves.find(shelf => shelf._id === loadCells.find(item => item._id === loadCellId)?.shelf_id)?.shelf_name}`;
       }
 
@@ -615,7 +612,6 @@ export default function ShelfInterface() {
               <ListItem
                 sx={{ display: "list-item", listStyleType: "disc", py: 0.25, ml: 2 }}
               >
-                <ListItemText primary="255: lỗi loadcell" primaryTypographyProps={{ variant: "body2" }} />
               </ListItem>
               <ListItem
                 sx={{ display: "list-item", listStyleType: "disc", py: 0.25, ml: 2 }}
