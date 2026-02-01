@@ -12,6 +12,7 @@ export interface Product {
   weight: number;
   discount: number;
   max_quantity: number;
+  threshold: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

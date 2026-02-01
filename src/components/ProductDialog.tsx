@@ -42,6 +42,7 @@ const ProductDialog: React.FC<ProductDialogProps> = ({
     weight: 0,
     discount: 0,
     max_quantity: 0,
+    threshold: 1,
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -70,6 +71,10 @@ const ProductDialog: React.FC<ProductDialogProps> = ({
             typeof (product as any).max_quantity === "number"
               ? (product as any).max_quantity
               : 0,
+          threshold:
+            typeof (product as any).threshold === "number"
+              ? (product as any).threshold
+              : 1,
         });
         setSelectedFile(null);
       } else {
@@ -85,6 +90,7 @@ const ProductDialog: React.FC<ProductDialogProps> = ({
           weight: 0,
           discount: 0,
           max_quantity: 0,
+          threshold: 1,
         });
         setSelectedFile(null);
       }
@@ -129,6 +135,10 @@ const ProductDialog: React.FC<ProductDialogProps> = ({
         Number.isFinite(Number(clean.max_quantity))
           ? Number(clean.max_quantity)
           : 0,
+      threshold:
+        Number.isFinite(Number(clean.threshold))
+          ? Number(clean.threshold)
+          : 1,
     };
 
     onSave(finalData, selectedFile || undefined);
@@ -305,6 +315,19 @@ const ProductDialog: React.FC<ProductDialogProps> = ({
                     InputProps={{
                       endAdornment: <InputAdornment position="end">%</InputAdornment>,
                     }}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid size={{md: 12, xs: 12}}>
+                  <TextField
+                    fullWidth
+                    label="Ngưỡng cảnh báo hết hàng"
+                    type="number"
+                    value={formData.threshold}
+                    onChange={(e) =>
+                      setFormData({ ...formData, threshold: Number(e.target.value) || 1 })
+                    }
+                    helperText="Sẽ cảnh báo khi số lượng trên kệ <= ngưỡng này"
                     variant="outlined"
                   />
                 </Grid>
