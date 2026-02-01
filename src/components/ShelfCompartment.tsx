@@ -73,19 +73,8 @@ const ShelfCompartment: React.FC<ShelfCompartmentProps> = ({
       setIsLoadCellError(0); // Reset lỗi nếu không phải các mã lỗi
     }
 
-    if (quantity < Number(localThreshold)) {
-      if (shelfItem) {
-        
-        handleCreateNotification(shelfItem._id, localProduct, quantity, localThreshold);
-      }
-    }
-
-    if (quantity === 200 || quantity === 222 || quantity === 255  ) {
-      if (shelfItem) {
-        
-        handleCreateNotification(shelfItem._id, localProduct, quantity, localThreshold);
-      }
-    }
+    // Backend đã tự động tạo notification qua MQTT
+    // Không cần tạo notification từ frontend nữa
   }, [quantity]);
 
   const handleOpenMenu = (event: React.MouseEvent) => {
