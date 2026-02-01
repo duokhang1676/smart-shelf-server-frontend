@@ -56,6 +56,7 @@ import {
 } from "../service/product.service";
 import { getHistories } from "../service/history.service";
 import { fetchAllReceipts } from "../service/receipt.service";
+import { io } from "socket.io-client";
 
 export default function ProductManagement() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -89,6 +90,70 @@ export default function ProductManagement() {
     })();
   }, []);
 
+  // Socket.IO để lắng nghe order mới và history mới
+  useEffect(() => {
+    const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:3000";
+    const socket = io(SOCKET_URL, {
+      transports: ['websocket', 'polling'],
+    });
+
+    socket.on('connect', () => {
+      console.log('ProductPage: Socket connected');
+    });
+
+    // Lắng nghe notification mới (có thể là order hoặc restock)
+    socket.on('new-notification', (notification: any) => {
+      console.log('ProductPage: Received notification', notification);
+      
+      // Nếu là order mới, trừ stock
+      if (notification.category === 'order') {
+        handleNewOrder(notification);
+      }
+      
+      // Nếu là restock, cập nhật stock từ history
+      if (notification.category === 'restock') {
+        handleRestock();
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  // Xử lý khi có order mới
+  const handleNewOrder = async (notification: any) => {
+    try {
+      // Lấy lại tất cả orders và tính lại stock
+      await refreshStockFromOrders();
+    } catch (error) {
+      console.error('Error handling new order:', error);
+    }
+  };
+
+  // Xử lý khi có restock mới
+  const handleRestock = async () => {
+    try {
+      // Lấy lại toàn bộ và tính lại stock
+      const result = await fetchProducts();
+      const productsWithStock = await calculateStockForProducts(result ?? []);
+      setProducts(productsWithStock);
+    } catch (error) {
+      console.error('Error handling restock:', error);
+    }
+  };
+
+  // Refresh stock từ orders (khi có order mới)
+  const refreshStockFromOrders = async () => {
+    try {
+      const result = await fetchProducts();
+      const productsWithStock = await calculateStockForProducts(result ?? []);
+      setProducts(productsWithStock);
+    } catch (error) {
+      console.error('Error refreshing stock:', error);
+    }
+  };
+
   // Hàm tính stock cho tất cả sản phẩm
   const calculateStockForProducts = async (productList: Product[]) => {
     try {
@@ -101,13 +166,24 @@ export default function ProductManagement() {
       const histories = historyRes?.data ?? [];
       const orders = ordersRes?.data ?? [];
 
+      // Sắp xếp lịch sử theo thời gian (mới nhất trước)
+      const sortedHistories = [...histories].sort((a, b) => {
+        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return timeB - timeA;
+      });
+
       // Tính toán cho từng sản phẩm
       return productList.map(product => {
         const productId = product._id || product.product_id;
 
-        // 1. Tính số lượng thêm vào từ lịch sử
-        let totalAdded = 0;
-        histories.forEach(history => {
+        // 1. Tìm lịch sử thêm hàng GẦN NHẤT có chứa sản phẩm này
+        let stockFromHistory = 0;
+        let foundInLatestHistory = false;
+
+        for (const history of sortedHistories) {
+          if (foundInLatestHistory) break;
+
           const postProducts = Array.isArray(history.post_products) ? history.post_products : [];
           const preProducts = Array.isArray(history.pre_products) ? history.pre_products : [];
           const postQuantities = Array.isArray(history.post_verified_quantity) ? history.post_verified_quantity : [];
@@ -119,17 +195,20 @@ export default function ProductManagement() {
             return pId === productId;
           });
 
-          // Tìm index của sản phẩm trong pre_products
-          const preIndex = preProducts.findIndex((p: any) => {
-            const pId = typeof p === 'object' ? (p._id || p.product_id) : p;
-            return pId === productId;
-          });
+          if (postIndex >= 0) {
+            // Tìm index trong pre_products
+            const preIndex = preProducts.findIndex((p: any) => {
+              const pId = typeof p === 'object' ? (p._id || p.product_id) : p;
+              return pId === productId;
+            });
 
-          const postQty = postIndex >= 0 ? (postQuantities[postIndex] || 0) : 0;
-          const preQty = preIndex >= 0 ? (preQuantities[preIndex] || 0) : 0;
-
-          totalAdded += (postQty - preQty);
-        });
+            const postQty = postQuantities[postIndex] || 0;
+            const preQty = preIndex >= 0 ? (preQuantities[preIndex] || 0) : 0;
+            
+            stockFromHistory = postQty - preQty;
+            foundInLatestHistory = true;
+          }
+        }
 
         // 2. Tính số lượng bán ra từ đơn hàng
         let totalSold = 0;
@@ -146,13 +225,11 @@ export default function ProductManagement() {
           });
         });
 
-        // 3. Tính stock = tổng thêm vào - tổng bán ra
-        const calculatedStock = totalAdded - totalSold;
+        // 3. Stock = (post - pre gần nhất) - tổng bán ra
+        const calculatedStock = stockFromHistory - totalSold;
 
         return {
           ...product,
-          in_stock: totalAdded,
-          out_stock: totalSold,
           stock: calculatedStock
         };
       });

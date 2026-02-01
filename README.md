@@ -265,12 +265,12 @@ npm install
 
 ## 📄 License
 
-[Thêm license của bạn ở đây]
+Apache 2.0
 
 ## 👥 Contributors
 
-[Thêm thông tin team của bạn]
+CS17IUH TEAM
 
 ## 📞 Support
 
-Để được hỗ trợ, vui lòng tạo issue trên GitHub hoặc liên hệ team qua email.
+Để được hỗ trợ, vui lòng tạo issue trên GitHub hoặc liên hệ team qua email duongkhang1676@gmail.com
