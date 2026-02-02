@@ -73,9 +73,9 @@ export default function ProductItem({ product, onEdit, onDelete }: ProductItemPr
             sx={{ fontWeight: "bold" }}
           />
         </Box>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+        {/* <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
           Stock: {product.stock}
-        </Typography>
+        </Typography> */}
         <CardActions sx={{ px: 0, mt: 1 }}>
           <Button size="small" startIcon={<EditIcon />} onClick={() => onEdit(product)}>
             Edit
